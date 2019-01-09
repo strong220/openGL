@@ -5,11 +5,18 @@ from ctypes.wintypes import *
 import cv2
 
 PS_DOT=1
-SRCCOPY=0xCC
+SRCCOPY=0xCC0020
 R2_NOTXORPEN=10
 IMAGE_BITMAP=0
 LR_LOADFROMFILE=0x00000010
 LR_DEFAULTSIZE=0x00000040
+LR_LOADTRANSPARENT=0x00000020
+BI_RGB=0x0000
+DIB_RGB_COLORS=0x00
+R2_XORPEN=0x0007
+WHITENESS=0x00FF0062
+SRCERASE=0x00440328
+SRCAND=0x008800C6
 def Longsplit(number):
     combined=list(bin(number))
     ##MAKE COMBINED A COMPLETE WORD##
@@ -32,6 +39,34 @@ def Longsplit(number):
     high="".join(high)
     low="".join(low)
     return [int(high,0),int(low,0)]
+
+class RGBQUAD(Structure):
+    _fields_=[('rgbBlue',BYTE),
+             ('rgbGreen',BYTE),
+             ('rgbRed',BYTE),
+             ('rgbReserved',BYTE)]
+    
+class BITMAPINFOHEADER(Structure):
+    _fields_=[("biSize",DWORD),
+              ("biWidth",c_long),
+              ("biHeight",c_long),
+              ("biPlanes",WORD),
+              ("biBitCount",WORD),
+              ("biCompression",DWORD),
+              ("biSizeImage",DWORD),
+              ("biXPelsPerMeter",c_long),
+              ("biClrUsed",DWORD),
+              ("biClrImortant",DWORD)]
+class BITMAPINFO(Structure):
+    _fields_=[("bmiHeader",BITMAPINFOHEADER),
+             ("bmiColors",RGBQUAD*256)]
+
+class LOGBRUSH(Structure):
+    _fields_=[("lbStyle",c_uint),
+              ("lbColor",COLORREF),
+              ("lbHatch",POINTER(c_ulong))]
+    
+
 class RECT(Structure):
     _fields_=[#("hdc",HDC),
               ("left",c_long),
@@ -41,6 +76,14 @@ class RECT(Structure):
 class POINT(Structure):
     _fields_=[("x",c_int),
               ("y",c_int)]
+class BITMAP(Structure):
+    _fields_=[("bmType",c_long),
+              ("bmWidth",c_long),
+              ("bmHeight",c_long),
+              ("bmWidthBytes",c_long),
+              ("bmPlanes",WORD),
+              ("bmBitsPixel",WORD),
+              ("bmBits",LPVOID)]#POINTER(BYTE))]#BYTE*1)]POINTER(BYTE*1))]#L
     
 
 class PAINTSTRUCT(Structure):
@@ -49,7 +92,7 @@ class PAINTSTRUCT(Structure):
               ("rcPaint", RECT),
               ("fRestore",c_bool),
               ("fIncUpdate",c_bool),
-              ("rgbReserved[32]", c_byte)]
+              ("rgbReserved", BYTE*32)]
 def MAKEINTRESOURCE(i):
     return None#i
 
@@ -68,6 +111,24 @@ def RGB(b,g,r):
     out="0x"+zeroword+blue+green+red
     out=int(out,0)
     return out
+
+class PALETTEENTRY(Structure):
+    _fields_=[("peRed",BYTE),
+              ("peGreen",BYTE),
+              ("peBlue",BYTE),
+              ("peFlags",BYTE)]
+
+class LOGPALETTE(Structure):
+    _fields_=[("palVersion",WORD),
+              ("palNumEntries",WORD),
+              ("palPalEntry",PALETTEENTRY*256)]
+
+class DIBSection(Structure):
+    _fields_=[("hMemDC",HDC),
+              ("hOldBitmap",HBITMAP),
+              ("rgb",RGBQUAD*256),
+              ("pLogPal",LOGPALETTE),#POINTER(LOGPALETTE)),
+              ('i',WORD)]
 
 class LPARAMS(Structure):
     _fields_=[("x",c_int),
@@ -88,13 +149,24 @@ class MainWndProc_var(Structure):
               ("hbmp",HBITMAP),                 ##handle of bitmap to display
               ("hbrBkgnd",HBRUSH),              ##handle of background-color brush
               ("crBkgnd",COLORREF),             ##color of client-area background
-              ("hpenDot",HPEN)]                 ##handle of dotted pen
+              ("hpenDot",HPEN),                 ##handle of dotted pen
+              ("hPalette",HPALETTE),            ##Palette
+              ("hOldPalette",HPALETTE),         ##Old Palette
+              ("hOldBitmap",HBITMAP),
+              ("bitmapheader",BITMAPINFOHEADER),##BITMAPINFOHEADER for creating a compatible bitmap
+              ("bitmapinfo",BITMAPINFO),
+              ("test",BYTE*1115136),#836352),
+              ("temp2",POINTER(BYTE*1115136)),
+              ("test2",BYTE*836352),
+              ("t",c_ulong*278784),#BYTE*1115136),
+              ("bm",BITMAP)]                    ##Bitmap tracker
 class hInstance(Structure):
     _fields_=[('hInstance',HANDLE)]
 
 class MainWndProc:
     def __init__(self,hwnd,uMsg,wParam,lparam,hInst):
         self.hwnd=hwnd
+        ps=PAINTSTRUCT()
         self.uMsg=uMsg
         self.wParam=wParam
         self.lParam=LPARAMS()
@@ -104,6 +176,7 @@ class MainWndProc:
         self.hinst=hInst
         self.vwin=MainWndProc_var()
         self.tried=0
+        self.color=DIBSection()
         self.call_back(hwnd,uMsg,wParam,lparam,hInst)
     def call_back(self,hwnd,uMsg,wParam,lparam,hInst):
         self.hwnd=hwnd
@@ -122,41 +195,29 @@ class MainWndProc:
         return method()
 
     def WM_CREATE(self):
-        ##Load the bitmap resource
-##        self.vwin.hbmp=windll.user32.LoadBitmapA(self.hinst, MAKEINTRESOURCE(1))
-        
-        file_path="C:\\Users\\fredstile\\Documents\\GitHub\\openGL\\images\\box2.bmp"
+        ##Load the bitmap resource    
+        file_path="C:\\Users\\fredstile\\Documents\\GitHub\\openGL\\images\\box_24.bmp"
         file_pointer=LPCWSTR(file_path)
-        print(file_pointer)
-##        t=cv2.imread(file_path,1)
-##        cv2.imshow('image',t)
-##        cv2.waitKey(0)
-
-##        file_path="box_24.bmp"
-##        file_path="C:\\Users\\fredstile\\Documents\\GitHub\\openGL\\images\\box_24.bmp\0"
-##        file_pointer=c_wchar_p(file_path)
-        h=hInstance()
+        self.vwin.hdc=windll.user32.GetDC(self.hwnd)
+        windll.gdi32.SetROP2(self.vwin.hdc, R2_NOTXORPEN)
         LoadImage=windll.user32.LoadImageW
         LoadImage.restype=HBITMAP
         LoadImage.argtypes = [HINSTANCE, LPCWSTR, UINT, c_int, c_int, UINT]
-##        LoadImage.errcheck=errcheck()
-##        self.vwin.hbmp=LoadImage(h.hInstance,file_pointer,IMAGE_BITMAP,0,0,LR_LOADFROMFILE)#8192|LR_DEFAULTSIZE|LR_LOADFROMFILE)
-        self.vwin.hbmp=LoadImage(c_void_p(),file_pointer,IMAGE_BITMAP,0,0,LR_DEFAULTSIZE|LR_LOADFROMFILE)#LR_DEFAULTSIZE|c_void_p()
-        print(GetLastError())
-        print(self.vwin.hbmp)
-        ##Create a device context (DC) to hold the bitmap
-        ##The bitmap is copied from this DC to the window's DC
-        ##whenever it must be drawn
-        self.vwin.hdc=windll.user32.GetDC(self.hwnd)
+        self.vwin.hbmp=LoadImage(c_void_p(),file_pointer,IMAGE_BITMAP,0,0,8192|LR_DEFAULTSIZE|LR_LOADFROMFILE)#LR_DEFAULTSIZE|c_void_p()8192|
+        windll.gdi32.GetObjectA(self.vwin.hbmp,ctypes.sizeof(BITMAP),pointer(self.vwin.bm))
         self.vwin.hdcCompat=windll.gdi32.CreateCompatibleDC(self.vwin.hdc)
         windll.gdi32.SelectObject(self.vwin.hdcCompat,self.vwin.hbmp)
-##        windll.gdi32.SelectObject(self.vwin.hbmp,self.vwin.hdcCompat)
+        ##Select the background color, the default is white
         ##Create a brush of the same color as the background
         ##of the client area. The brush is used later to erase
         ##the old bitmap before copying the bitmap into the
         ##target rectangle
+        windll.gdi32.SetBkColor(self.vwin.hdc,RGB(0,0,120))
         self.vwin.crBkgnd=windll.gdi32.GetBkColor(self.vwin.hdc)
         self.vwin.hbrBkgnd=windll.gdi32.CreateSolidBrush(self.vwin.crBkgnd)
+        windll.gdi32.SelectObject(self.vwin.hdcCompat,self.vwin.hbrBkgnd)
+        print("bitblt",windll.gdi32.BitBlt(self.vwin.hdc,0,0,self.vwin.bm.bmWidth,self.vwin.bm.bmHeight,self.vwin.hdcCompat,0,0,SRCCOPY))
+        print(self.vwin.bm.bmWidth)
         windll.user32.ReleaseDC(self.hwnd,self.vwin.hdc)
         ##Create a dotted pen. The pen is used to draw the
         ##bitmap rectangle as the user drags it.
@@ -174,12 +235,15 @@ class MainWndProc:
         ##coordinates of the bitmap rectangle, and subtracting 2
         ##from the right and bottom coordinates.
         windll.user32.BeginPaint(self.hwnd,pointer(self.vwin.ps))
+        print("hdc",self.vwin.ps.hdc)
+        print("hdcCompat",self.vwin.hdcCompat)
         windll.gdi32.Rectangle(self.vwin.ps.hdc,self.vwin.rcBmp.left,self.vwin.rcBmp.top,
                                self.vwin.rcBmp.right,self.vwin.rcBmp.bottom)
-        windll.gdi32.StretchBlt(self.vwin.ps.hdc,self.vwin.rcBmp.left+1,self.vwin.rcBmp.top+1,
+        print("stretch",windll.gdi32.StretchBlt(self.vwin.ps.hdc,self.vwin.rcBmp.left+1,self.vwin.rcBmp.top+1,
                                  (self.vwin.rcBmp.right-self.vwin.rcBmp.left)-2,
                                  (self.vwin.rcBmp.bottom-self.vwin.rcBmp.top)-2,
-                                 self.vwin.hdcCompat,0,0,32,32,SRCCOPY)
+                                 self.vwin.hdcCompat,0,0,32,32,SRCCOPY))
+        print("getpixel",windll.gdi32.GetPixel(self.vwin.ps.hdc,60,30))
         windll.user32.EndPaint(self.hwnd,pointer(self.vwin.ps))
         return
     def WM_MOVE(self):
@@ -216,7 +280,13 @@ class MainWndProc:
         if (windll.user32.PtInRect(pointer(self.vwin.rcBmp),self.vwin.pt)):
             self.vwin.hdc=windll.user32.GetDC(self.hwnd)
             ##Remove previous Bitmap
-            windll.user32.FillRect(self.vwin.hdc,pointer(self.vwin.rcBmp),self.vwin.hbrBkgnd)
+##            windll.user32.FillRect(self.vwin.hdc,pointer(self.vwin.rcBmp),self.vwin.hbrBkgnd) ##Fill in the space behind the square with the background
+            windll.gdi32.StretchBlt(self.vwin.hdc,self.vwin.rcBmp.left,self.vwin.rcBmp.top,     ##Replace the square with the hbmp bitmap
+                         (self.vwin.rcBmp.right-self.vwin.rcBmp.left),
+                         (self.vwin.rcBmp.bottom-self.vwin.rcBmp.top),
+                         self.vwin.hdcCompat,self.vwin.rcBmp.left,self.vwin.rcBmp.top,
+                         (self.vwin.rcBmp.right-self.vwin.rcBmp.left),
+                         (self.vwin.rcBmp.bottom-self.vwin.rcBmp.top),SRCCOPY)
             windll.gdi32.SelectObject(self.vwin.hdc,self.vwin.hpenDot)
             windll.gdi32.Rectangle(self.vwin.hdc,self.vwin.rcBmp.left,self.vwin.rcBmp.top,
                                    self.vwin.rcBmp.right,self.vwin.rcBmp.bottom)
@@ -228,7 +298,6 @@ class MainWndProc:
         MK_LBUTTON=inputs.get(self.wParam,False)
         ##Draw a target rectangle or drag the bitmap rectangle,
         ##Depending on the status of the fDragRect flag
-
         if((self.wParam and MK_LBUTTON) and self.vwin.fDragRect==False):
             ##Set the mix mode so that the pen color is the
             ##inverse of the background color. The previous
@@ -294,6 +363,7 @@ class MainWndProc:
             self.vwin.pt.y=self.lParam.y
         return 0
     def WM_LBUTTONUP(self):
+##        input("pause")
         ##If the bitmap rectangle and target rectangle
         ##intersect, copy the bitmap into the target
         ##rectangle. Otherwise, copy the bitmap into the

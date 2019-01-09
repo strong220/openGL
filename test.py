@@ -47,7 +47,7 @@ class PAINTSTRUCT(Structure):
               ("rcPaint", RECT),
               ("fRestore",c_bool),
               ("fIncUpdate",c_bool),
-              ("rgbReserved[32]", c_byte)]
+              ("rgbReserved", c_byte*32)]
               
 
 class MSG2(Structure):
@@ -130,14 +130,14 @@ def main():
 
     wndClass=initialize_window(hInst,wclassName)
     regRes = windll.user32.RegisterClassExA(byref(wndClass))                                                                                    #Initialize Window
-    hWnd = windll.user32.CreateWindowExA(0,wclassName,wname,WS_OVERLAPPEDWINDOW | WS_CAPTION,CW_USEDEFAULT, CW_USEDEFAULT,400,400,0,0,hInst,0)  #Create Window
+    hWnd = windll.user32.CreateWindowExA(0,wclassName,wname,WS_OVERLAPPEDWINDOW | WS_CAPTION,CW_USEDEFAULT, CW_USEDEFAULT,650,650,0,0,hInst,0)  #Create Window
     windll.user32.UpdateWindow(hWnd)
     windll.user32.ShowWindow(hWnd, SW_SHOW)                                                                                                     #Display Window
 ##CREATE RECTANGLE##
     LPARAM=1
-    a=MainWndProc(hWnd,WM_CREATE,WPARAM,LPARAM,hInst)
-    a.call_back(hWnd,WM_PAINT,WPARAM,LPARAM,hInst)
-    a.call_back(hWnd,WM_SIZE,WPARAM,LPARAM,hInst)
+    a=MainWndProc(hWnd,WM_CREATE,WPARAM,0,hInst)
+    a.call_back(hWnd,WM_PAINT,WPARAM,0,hInst)
+    a.call_back(hWnd,WM_SIZE,WPARAM,0,hInst)
 ####    test="NULL"
 ##    paintclass=PAINTSTRUCT()                                    #Create Structure for Rectangle
 ####    hbmp=windll.user32.LoadBitmapA(hInst,None)                  #Create a Bitmap for editing
