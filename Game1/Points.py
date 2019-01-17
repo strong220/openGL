@@ -1,6 +1,30 @@
 ####This File Contains points for all of the countries##
 from ctypes import *
 from ctypes.wintypes import *
+def CARD_REGIONS(i):
+    card1=[(300,332),
+           (448,269),
+           (547,498),
+           (398,563)]
+    card2=[(602,501),
+           (701,272),
+           (848,334),
+           (748,559)]
+    card3=[(500,250),
+           (660,250),
+           (660,499),
+           (500,498)]
+    card4=[(666,467),
+           (900,376),
+           (959,526),
+           (725,619)]
+    card5=[(435,616),
+           (200,526),
+           (259,374),
+           (492,465)]
+    Cards={1:card1,2:card2,3:card3,4:card4,5:card5}
+    return Cards[i]
+
 def REGION_POINTS(reg):
     a1_NA= [(7,115),
             (29,101),
@@ -3174,8 +3198,7 @@ def COUNTRY_POINTS(i):
          42:a4_AU}
     temp=(countries[i][0]-9,countries[i][1]-10)
     return temp
-
-def ADJACENT(attacking,defending):
+def ADJACENT_DATA(i):
     a1_NA=(1,5,31)#0
     a2_NA=(0,5,6,8)#1
     a3_NA=(3,8,12)#2
@@ -3218,16 +3241,20 @@ def ADJACENT(attacking,defending):
     a2_AU=(34,40,41)#39
     a3_AU=(38,39,41)#40
     a4_AU=(38,39,40)#41
-
+    
     countries={1:a1_NA,2:a2_NA,3:a3_NA,4:a4_NA,5:a5_NA,6:a6_NA,
-             7:a7_NA,8:a8_NA,9:a9_NA,10:a1_SA,11:a2_SA,12:a3_SA,
-             13:a4_SA,14:a1_EU,15:a2_EU,16:a3_EU,17:a4_EU,
-             18:a5_EU,19:a6_EU,20:a7_EU,21:a1_AF,22:a2_AF,23:a3_AF,
-             24:a4_AF,25:a5_AF,26:a6_AF,27:a1_AS,28:a2_AS,29:a3_AS,
-             30:a4_AS,31:a5_AS,32:a6_AS,33:a7_AS,34:a8_AS,35:a9_AS,
-             36:a10_AS,37:a11_AS,38:a12_AS,39:a1_AU,40:a2_AU,41:a3_AU,
-             42:a4_AU}
-    for i in range(len(countries[attacking])):
-        if defending==(countries[attacking][i]+1):
+         7:a7_NA,8:a8_NA,9:a9_NA,10:a1_SA,11:a2_SA,12:a3_SA,
+         13:a4_SA,14:a1_EU,15:a2_EU,16:a3_EU,17:a4_EU,
+         18:a5_EU,19:a6_EU,20:a7_EU,21:a1_AF,22:a2_AF,23:a3_AF,
+         24:a4_AF,25:a5_AF,26:a6_AF,27:a1_AS,28:a2_AS,29:a3_AS,
+         30:a4_AS,31:a5_AS,32:a6_AS,33:a7_AS,34:a8_AS,35:a9_AS,
+         36:a10_AS,37:a11_AS,38:a12_AS,39:a1_AU,40:a2_AU,41:a3_AU,
+         42:a4_AU}
+    return countries[i]
+
+def ADJACENT(attacking,defending):
+    
+    for i in range(len(ADJACENT_DATA(attacking))):
+        if defending==(ADJACENT_DATA(attacking)[i]+1):
             return True
     return False
