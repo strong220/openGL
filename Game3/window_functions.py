@@ -1,0 +1,161 @@
+##THIS FILE CONTAINS ALL THE FUNCTIONS FOR UPDATING THE WINDOW
+import window_structures
+from ctypes import *
+from ctypes.wintypes import *
+from Points import *
+def ShiftRect(rcTemp,x,y):
+    rcTemp.left=rcTemp.left+x
+    rcTemp.right=rcTemp.right+x
+    rcTemp.top=rcTemp.top+y
+    rcTemp.bottom=rcTemp.bottom+y
+    return 0
+
+def ARRAY_CREATE(h,w):
+    #initialize
+    matrix=[[]]
+    for i in range(h):
+        if i!=0:
+            matrix.append([[]])
+        for j in range(w):
+            matrix[i].append([])
+    return matrix
+
+def REGION(reg):
+    points=Character_Regions(reg)
+    Rgn=POINT*len(points)
+    temp=[]
+    for i in range(len(points)):
+        temp.append(POINT(points[i][0],points[i][1]))
+    out=Rgn(*temp)
+    return out
+
+def Longsplit(number):
+    combined=list(bin(number))
+    ##MAKE COMBINED A COMPLETE WORD##
+    while len(combined)<34:
+        combined.insert(2,'0')
+    low=list(range(16))
+    high=list(range(16))
+    ##SPLIT WORD##
+    for i in range(32):
+        if i<len(combined)-2:
+            if i<16:
+                low[i]=combined[i+2]
+            else:
+                high[i-16]=combined[i+2]
+    ##Make words##
+    high.insert(0,"b")
+    high.insert(0,"0")
+    low.insert(0,"b")
+    low.insert(0,"0")
+    high="".join(high)
+    low="".join(low)
+    return [int(high,0),int(low,0)]
+
+##DEFINE CONSTANTS
+PS_DOT=1
+SRCCOPY=0xCC0020
+R2_NOTXORPEN=10
+IMAGE_BITMAP=0
+LR_LOADFROMFILE=0x00000010
+LR_DEFAULTSIZE=0x00000040
+LR_LOADTRANSPARENT=0x00000020
+BI_RGB=0x0000
+DIB_RGB_COLORS=0x00
+R2_XORPEN=0x0007
+R2_COPYPEN=0x000D
+R2_BLACK = 0x0001
+R2_NOTMERGEPEN = 0x0002
+R2_MASKNOTPEN = 0x0003
+R2_NOTCOPYPEN = 0x0004
+R2_MASKPENNOT = 0x0005
+R2_NOT = 0x0006
+R2_NOTMASKPEN = 0x0008
+R2_MASKPEN = 0x0009
+R2_NOTXORPEN = 0x000A
+R2_NOP = 0x000B
+R2_MERGENOTPEN = 0x000C
+R2_MERGEPENNOT = 0x000E
+R2_MERGEPEN = 0x000F
+R2_WHITE = 0x0010
+WHITENESS=0x00FF0062
+SRCERASE=0x00440328
+SRCAND=0x008800C6
+ALTERNATE=0x0001
+R2_MASKPEN=0x0009
+WINDING = 0x0002
+MWT_IDENTITY = 0x01
+MWT_LEFTMULTIPLY = 0x02
+MWT_RIGHTMULTIPLY = 0x03
+MWT_SET = 0x04
+GM_COMPATIBLE = 0x00000001
+GM_ADVANCED = 0x00000002
+RGN_OR=0x02
+##PICTURE CONSTANTS##
+character_width=175
+character_height=440
+backgrnd_window_w=1000
+backgrnd_window_h=1000
+main_window_w=800
+main_window_h=800
+map_w=10000
+map_h=10000
+tile_w=200
+tile_h=200
+tree1_w=140
+tree1_h=350
+wall_vertical_w=50
+wall_vertical_h=300
+wall_horizontal_w=200
+wall_horizontal_h=105
+button_w=31
+button_h=31
+stats_block_w=200
+stats_block_h=800
+token_h=50
+token_w=50
+shiftx=int(main_window_w/2-character_width/2)
+shifty=int(main_window_h/2-character_height/2)
+r_build,l_build,u_build,d_build=[POINT(),POINT(),POINT(),POINT()]
+r_build.x=0
+r_build.y=int(tile_h/2)
+l_build.x=tile_w-button_w
+l_build.y=int(tile_h/2)
+u_build.x=int(tile_w/2)
+u_build.y=tile_h-button_h
+d_build.x=int(tile_h/2)
+d_build.y=0
+##KEYBOARD KEYS
+S_KEY=83
+S_KEY_DOWN=115
+A_KEY=65
+A_KEY_DOWN=97
+D_KEY=68
+D_KEY_DOWN=100
+W_KEY=87
+W_KEY_DOWN=119
+E_KEY=0x45
+E_KEY_DOWN=101
+Q_KEY=81
+Q_KEY_DOWN=113
+NUM4_KEY=100
+NUM4_KEY_DOWN=52
+NUM8_KEY=104
+NUM8_KEY_DOWN=56
+NUM6_KEY=102
+NUM6_KEY_DOWN=54
+NUM5_KEY=101
+NUM5_KEY_DOWN=53
+NUM9_KEY=105
+NUM9_KEY_DOWN=57
+NUM7_KEY=103
+NUM7_KEY_DOWN=55
+##TOOL SELECTION
+Axe=0
+Empty_Hand=1
+
+LoadImage=windll.user32.LoadImageW
+LoadImage.restype=HBITMAP
+LoadImage.argtypes = [HINSTANCE, LPCWSTR, UINT, c_int, c_int, UINT]
+CreatePolygonRgn=windll.gdi32.CreatePolygonRgn
+

@@ -534,20 +534,39 @@ class MainWndProc:
         TRANSFORM(self.vwin.InvTransform[0],0, 0,0)                                 ##Identity matrix until I can figure out how the other transforms should work
         windll.gdi32.SetGraphicsMode(self.vwin.hdcCompat_card[0],GM_ADVANCED)
         windll.gdi32.SetGraphicsMode(self.vwin.hdc,GM_ADVANCED)
+        ##INITIALIZE PLAYERS
+        for i in range(len(self.vwin.All_Players)):
+            self.vwin.All_Players[i].Team=i
+            self.vwin.All_Players[i].Num_armies=80
         ##CREATE REGIONS FOR EACH COUNTRY, CREATE THE DECK, AND INITIALIZE TOKEN POINTS##
         self.vwin.SelectedRgn=0
         CreatePolygonRgn=windll.gdi32.CreatePolygonRgn
         for i in range(42):
             Points=REGION(i+1)
             Points_place=COUNTRY_POINTS(i+1)
+            ##INITIALIZE DECK##
             self.vwin.Deck[i].Type=i%3+1
             self.vwin.Deck[i].Country=i
+            ##ASSIGN TOKENS##
             self.vwin.Countries[i].region=CreatePolygonRgn(Points,len(Points),WINDING)
             self.vwin.Countries[i].Token_point.x=Points_place[0]
             self.vwin.Countries[i].Token_point.y=Points_place[1]
-            self.vwin.Countries[i].Team=i%2
-            self.vwin.All_Players[i%2].Num_countries=self.vwin.All_Players[i%2].Num_countries+1
-            self.vwin.Countries[i].Num_armies=i
+            ##RANDOMIZE COUNTRIES##
+            player=int(random.random()+.5)
+            while self.vwin.All_Players[player].Num_countries>42/len(self.vwin.All_Players):
+                player=int(random.random()+.5)
+            self.vwin.Countries[i].Team=player
+            self.vwin.All_Players[player].Num_countries=self.vwin.All_Players[player].Num_countries+1
+            ##ADD ARMIES##
+            army=int(random.random()*5+.5)+1
+            temp=(self.vwin.All_Players[player].Num_armies-army)/42*len(self.vwin.All_Players)
+            if temp<1:
+                army=1
+##            if army>(self.vwin.All_Players[player].Num_armies/42*len(self.vwin.All_Players)):
+##                army=int(self.vwin.All_Players[player].Num_armies/42*len(self.vwin.All_Players))
+            self.vwin.Countries[i].Num_armies=army
+            self.vwin.All_Players[player].Num_armies=self.vwin.All_Players[player].Num_armies-army
+            
         ##GET TOKEN INFO##
         windll.gdi32.SelectObject(self.vwin.ps.hdc,self.vwin.token_region)
         ##CREATE REGIONS FOR EACH POTENTIAL CARD##
@@ -560,10 +579,6 @@ class MainWndProc:
         self.vwin.Draw_card=0
         self.vwin.Card_bonus=-1
         self.vwin.Card_bonus_amount=4
-        ##INITIALIZE PLAYERS
-        for i in range(len(self.vwin.All_Players)):
-            self.vwin.All_Players[i].Team=i
-            self.vwin.All_Players[i].Num_armies=-1
         self.vwin.place=False
 ##        for i in range(2):
 ##            self.vwin.All_Players[0].Cards[i].Type=i%3+1
