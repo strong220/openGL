@@ -51,31 +51,47 @@ def UPDATE_MEM_BACKGROUND(player,cs,map_all):       #It takes in the class varia
                     else:
                         windll.gdi32.BitBlt(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],position,
                                             wf.tile_w,wf.tile_h,cs.dict_grass_hdc[tiles[temp[0:2]]],0,0,wf.SRCCOPY)
+    cs.Player1.Draw_Character(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],
+                                                  cs.variables.player_window_ULtile[player])
+    cs.Player2.Draw_Character(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],
+                                                  cs.variables.player_window_ULtile[player])
+    if (abs(temp_tile.x-cs.variables.player_window_ULtile[player].x)>=1 or abs(temp_tile.y-cs.variables.player_window_ULtile[player].y)>=1) or cs.variables.player_window[player]==False:
+        for j in range(int(wf.backgrnd_window_h/wf.tile_h)):
+            for i in range(int(wf.backgrnd_window_w/wf.tile_w)):
+                ##DEFINE CURRENT GRID POSITION##
+                grid_position_x=shiftx+i
+                grid_position_y=shifty+j
+                if grid_position_x<len(map_all) and grid_position_y<len(map_all[0]):
+                    temp=map_all[grid_position_x][grid_position_y]
                     ##ADD OBJECTS AND BUTTONS##
-                    tree_check=cs.Tree1.Draw_Tree(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],temp,i*wf.tile_w,j*wf.tile_w,Player_selection[player],player)
                     if temp[2]!="-":
                         ##CHECK FOR TREE OBJECT##
+                        tree_check=cs.Tree1.Draw_Tree(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],temp,i*wf.tile_w,j*wf.tile_w,Player_selection[player],player)
+                        ##CHECK FOR WALL OBJECT##
+                        wall_check=cs.Wall1.Draw_Wall(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],temp,i*wf.tile_w,j*wf.tile_w,Player_selection[player],player)
                         if tree_check>0:
                             ##If button has been placed check for key press if button has been drawn##
                             if key_last[player]==KEY_DOWN[player] and tree_check==1:
                                 map_all[grid_position_x][grid_position_y]=temp[0:2]+"----"
                                 cs.variables.Num_trees_cut=cs.variables.Num_trees_cut+1
-                        ##CHECK FOR WAL OBJECT##
-                        elif temp[2]=="W":
-                            ##Update position for wall
-                            position=POINT(wall_placement[temp[3]].x+i*wf.tile_w,
-                                           wall_placement[temp[3]].y+j*wf.tile_h)
-                            ##Draw Wall##
-                            windll.gdi32.OffsetRgn(cs.variables.Object_Rgn.Region_wall[int(int(temp[3])/2)],position)                     ##Shift Region for drawing wall
-                            windll.gdi32.SelectClipRgn(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],            ##Select the Region to draw on the background
-                                                       cs.variables.Object_Rgn.Region_wall[int(int(temp[3])/2)])
-                            windll.gdi32.BitBlt(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],position,          ##Draw the wall onto the background
-                                                wall_width[temp[3]],wall_height[temp[3]],
-                                                cs.dict_object_hdc[wall_type[temp[3]]],0,0,wf.SRCCOPY)
-                            windll.gdi32.SelectClipRgn(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],None)       ##Remove the clipping region
-                            windll.gdi32.OffsetRgn(cs.variables.Object_Rgn.Region_wall[int(int(temp[3])/2)],-position.x,-position.y)      ##Return the region to the orginal position
+            for i in range(int(wf.backgrnd_window_w/wf.tile_w)):
+                ##DEFINE CURRENT GRID POSITION##
+                grid_position_x=shiftx+i
+                if grid_position_x==cs.Player1.tile_position.x and grid_position_y==int(cs.Player1.Target_Box()[0].y/wf.tile_h):
+                        cs.Player1.Draw_Character(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],
+                                                  cs.variables.player_window_ULtile[player])
+                if grid_position_x==cs.Player2.tile_position.x and grid_position_y==int(cs.Player2.Target_Box()[0].y/wf.tile_h):
+                        cs.Player2.Draw_Character(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],
+                                                  cs.variables.player_window_ULtile[player])
+        for j in range(int(wf.backgrnd_window_h/wf.tile_h)):
+            for i in range(int(wf.backgrnd_window_w/wf.tile_w)):
+                ##DEFINE CURRENT GRID POSITION##
+                grid_position_x=shiftx+i
+                grid_position_y=shifty+j
+                if grid_position_x<len(map_all) and grid_position_y<len(map_all[0]):
                     ##If there is no object and the player is building
-                    elif temp[2:5]=="--B" and Player_selection[player]==wf.Empty_Hand:
+                    temp=map_all[grid_position_x][grid_position_y]
+                    if temp[2:5]=="--B" and Player_selection[player]==wf.Empty_Hand:
                         ##Update position for button depending on where player is facing
                         position=POINT(direction[Player_direction[player]].x+i*wf.tile_w,
                                        direction[Player_direction[player]].y+j*wf.tile_h)
@@ -103,8 +119,21 @@ def UPDATE_MEM_BACKGROUND(player,cs,map_all):       #It takes in the class varia
                             if cs.variables.Num_trees_cut>=0:
                                 cs.variables.Num_trees_cut=cs.variables.Num_trees_cut                            ##Remove the resource needed for the wall
                                 map_all[grid_position_x][grid_position_y]=temp[0:2]+"W"+wall_direction[Player_direction[player]]+"--"##Record wall placement
+                        else:
+                            map_all[grid_position_x][grid_position_y]=temp[0:2]+"----"##Record wall placement
         else:
             cs.variables.player1_window=True
+        ##PLACE OTHER CHARACTERS##
+##        if player==1:
+##            cs.Player1.Draw_Character(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],
+##                                      cs.variables.player_window_ULtile[player])
+##            cs.Player2.Draw_Character(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],
+##                                      cs.variables.player_window_ULtile[player])
+##        elif player==0:
+##            cs.Player2.Draw_Character(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],
+##                                      cs.variables.player_window_ULtile[player])
+##            cs.Player1.Draw_Character(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],
+##                                      cs.variables.player_window_ULtile[player])
         ##PLACE BACKGROUND IN PLAYER WINDOW##
         shiftedUL=POINT()
         shiftedUL.x=(Player_window[player].windowUL.x-wf.shiftx)%wf.tile_w                  ##Determines how much the background needs to shift in x in relation to player window
@@ -113,17 +142,5 @@ def UPDATE_MEM_BACKGROUND(player,cs,map_all):       #It takes in the class varia
                             wf.backgrnd_window_w,wf.backgrnd_window_h,
                             cs.dict_background_hdc["mem_backgrnd"+str(player+1)],
                             shiftedUL,wf.SRCCOPY)
-        ##PLACE OTHER CHARACTERS
-        shiftedUL_2=POINT()
-        shiftedUL_2.x=Player_window[(player+1)%2].windowUL.x-(Player_window[player].windowUL.x-wf.shiftx)   ##Determine where the second character is in relation to the reference point in x
-        shiftedUL_2.y=Player_window[(player+1)%2].windowUL.y-(Player_window[player].windowUL.y-wf.shifty)   ##Determine where the second character is in relation to the reference point in y
-        windll.gdi32.OffsetRgn(Player_Rgn[Player_direction[(player+1)%2]][0],shiftedUL_2)                   ##Shift the other characters region to allow for drawing
-        windll.gdi32.SelectClipRgn(cs.dict_background_hdc["mem_main"+str(player+1)],                        ##Select the region for drawing
-                                   Player_Rgn[Player_direction[(player+1)%2]][0])
-        windll.gdi32.BitBlt(cs.dict_background_hdc["mem_main"+str(player+1)],shiftedUL_2,                   ##Draw the second character
-                            wf.character_width,wf.character_height,
-                            cs.dict_character_hdc["character"+str((player+1)%2+1)+"_"+Player_direction[(player+1)%2]],0,0,wf.SRCCOPY)
-        windll.gdi32.SelectClipRgn(cs.dict_background_hdc["mem_main"+str(player+1)],None)                   ##Remove the clipping region
-        windll.gdi32.OffsetRgn(Player_Rgn[Player_direction[(player+1)%2]][0],-shiftedUL_2.x,-shiftedUL_2.y) ##Return the region to its original position
-    
+        
     return 0

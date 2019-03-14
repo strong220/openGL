@@ -7,6 +7,9 @@ from ctypes import *
 from ctypes.wintypes import *
 import time
 from Game3_update import *
+import winsound
+##file_path_main="C:\\Users\\fredstile\\Documents\\GitHub\\openGL\\Sounds\\Trial.wma"
+##winsound.PlaySound(file_path_main,winsound.SND_FILENAME)
 
 ##Define Constants
 WNDPROCTYPE = WINFUNCTYPE(c_int, HWND, c_uint, WPARAM, LPARAM)

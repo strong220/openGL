@@ -3,12 +3,70 @@ import window_structures
 from ctypes import *
 from ctypes.wintypes import *
 from Points import *
+from math import *
+def Transform_points(points,rotation,x,y):
+    theta=rotation*pi/180
+    Rotation_matrix=[[cos(theta),-sin(theta),x],
+                     [sin(theta),cos(theta),y],
+                     [0,0,1]]
+    points_out=POINT*len(points)
+    temp0=[]
+    for i in range(len(points)):
+        Points=[points[i][0],points[i][1],1]
+        temp=[0,0]
+        for row in range(2):
+            for col in range(3):
+                temp[row]=Rotation_matrix[row][col]*Points[col]+temp[row]
+        temp0.append(POINT(int(temp[0]),int(temp[1])))
+    out=points_out(*temp0)
+    return out       
+
 def ShiftRect(rcTemp,x,y):
     rcTemp.left=rcTemp.left+x
     rcTemp.right=rcTemp.right+x
     rcTemp.top=rcTemp.top+y
     rcTemp.bottom=rcTemp.bottom+y
     return 0
+
+def orientation(p,q,r):
+    ##function from geeksforgeeks.org
+    val=(p.y-q.y)*(r.x-q.x)-(p.x-q.x)*(r.y-q.y)
+    if val==0:
+        return 0
+    elif val>0:
+        return 1
+    else:
+        return 2
+
+def check_intersection(R1,R2,P1,P2):
+    orientation1=orientation(R1,R2,P1)
+    orientation2=orientation(R1,R2,P2)
+##    if orientation1==0 or orientation2==0:
+##        return False
+    if orientation1!=orientation2:
+        orientation3=orientation(P1,P2,R1)
+        orientation4=orientation(P1,P2,R2)
+        if orientation3!=orientation4:
+##            if orientation3==0 or orientation4==0:
+##                return False
+##            else:
+            return True
+        else:
+            return False
+    else:
+        return False
+
+def check_intersection2(L1a,L1b,L2a,L2b,Ca,Cb):
+    ##L1 is above L2 and Ca is above Cb##
+    ##or L1 is left of L2 and Ca is left of Cb##
+    orientation1=orientation(L1a,L1b,Cb)
+    orientation2=orientation(L2a,L2b,Ca)
+    if orientation1!=orientation2:# and orientation1!=0 and orientation2!=0:
+        orientation3=orientation(Ca,Cb,L1a)
+        orientation4=orientation(Ca,Cb,L1b)
+        if orientation3!=orientation4:# and orientation3!=0 and orientation!=4:
+            return True
+    return False
 
 def ARRAY_CREATE(h,w):
     #initialize
@@ -108,6 +166,8 @@ wall_vertical_w=50
 wall_vertical_h=300
 wall_horizontal_w=200
 wall_horizontal_h=105
+wall_w=[wall_vertical_w,wall_horizontal_w]
+wall_h=[wall_vertical_h,wall_horizontal_h]
 button_w=31
 button_h=31
 stats_block_w=200

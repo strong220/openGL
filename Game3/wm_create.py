@@ -3,6 +3,9 @@
 import window_functions as wf
 import window_structures as ws
 from Tree1_Sprite import Tree_Sprite_1
+from Wall_Sprite_1 import Wall_Sprite_1
+from Player1_Sprite import Player1_Sprite
+from Player2_Sprite import Player2_Sprite
 from ctypes import *
 from ctypes.wintypes import *
 
@@ -12,7 +15,6 @@ def WM_CREATE(cs,hwnd,map_all):##USE CLASS VARIABLES
     ##IMPORT PICTURES##
     ###################
     cs.variables.hdc_show=windll.user32.GetDC(hwnd)    ##Create the reference hdc from the window
-    cs.Tree1=Tree_Sprite_1(cs.variables.hdc_show,file_path_main)
     #Find CHARACTER Files#
     character1_down_file="Face_forward_1a.bmp"
     character1_up_file="Face_backward_1a.bmp"
@@ -34,7 +36,8 @@ def WM_CREATE(cs,hwnd,map_all):##USE CLASS VARIABLES
         cs.dict_character_hdc[hdc]=windll.gdi32.CreateCompatibleDC(cs.variables.hdc_show)   #Make hdc similar to the reference hdc
         windll.gdi32.SelectObject(cs.dict_character_hdc[hdc],cs.dict_character_hbmp[hbmp])  #Copy image into hdc
         
-
+    cs.Player1=Player1_Sprite(cs.variables.hdc_show,file_path_main)
+    cs.Player2=Player2_Sprite(cs.variables.hdc_show,file_path_main)
     #Find GRASS files#
     grass_block1_file="Grass_1.bmp"
     grass_block2_file="Grass_2.bmp"
@@ -50,21 +53,9 @@ def WM_CREATE(cs,hwnd,map_all):##USE CLASS VARIABLES
         cs.dict_grass_hdc[hdc]=windll.gdi32.CreateCompatibleDC(cs.variables.hdc_show)   #Make hdc similar to the reference hdc
         windll.gdi32.SelectObject(cs.dict_grass_hdc[hdc],cs.dict_grass_hbmp[hbmp])      #Copy image into hdc
 
-    #Find OBJECT files#
-    tree1_file="Tree_1.bmp"
-    wall_vertical_file="Wall_vertical.bmp"
-    wall_horizontal_file="Wall_horizontal.bmp"
-    cs.dict_object_files={"tree1":tree1_file,"wall_vertical":wall_vertical_file,"wall_horizontal":wall_horizontal_file}
-    #Load object files, assign pointers, and store pointers in dictionary
-    for i in range(3):
-        file=cs.dict_object_index[i]
-        hbmp=cs.dict_object_index[i]
-        hdc=cs.dict_object_index[i]
-        cs.dict_object_hbmp[hbmp]=wf.LoadImage(c_void_p(),LPCWSTR(file_path_main+cs.dict_object_files[file]),wf.IMAGE_BITMAP,0,0,8192|wf.LR_DEFAULTSIZE|wf.LR_LOADFROMFILE)
-        cs.dict_object_hdc[hdc]=windll.gdi32.CreateCompatibleDC(cs.variables.hdc_show)
-        ##Create HDC##
-        cs.dict_object_hdc[hdc]=windll.gdi32.CreateCompatibleDC(cs.variables.hdc_show)  #Make hdc similar to the reference hdc
-        windll.gdi32.SelectObject(cs.dict_object_hdc[hdc],cs.dict_object_hbmp[hbmp])    #Copy image into hdc
+    #Load OBJECTS#
+    cs.Tree1=Tree_Sprite_1(cs.variables.hdc_show,file_path_main)
+    cs.Wall1=Wall_Sprite_1(cs.variables.hdc_show,file_path_main)
 
     #Find Button and Token files#
     red_button_file="Red_button.bmp"

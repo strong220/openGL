@@ -2097,9 +2097,17 @@ def Character_Regions(i):
             34:Wall_vertical,35:Wall_horizontal}
     return Region[i]
 
-##temp=Character_Regions(35)
-##for i in range(29):
-##    print("(%s,%s)," %(temp[0][0]+i*10,temp[0][1]))
+##temp=Character_Regions(9)
+##t=len(temp)
+##minimum=100
+##out="["
+##for i in range(t):
+##    if temp[i][1]<minimum:
+##        minimum=temp[i][1]
+##    out=out+"("+str(temp[i][0]-49)+","+str(temp[i][1])+"),"
+##    print("(%s,%s)," %(temp[i][0]-49,temp[i][1]))
+
+##print(minimum)
 ##    print("(%s,%s)," %(temp[1][0]+i*10,temp[1][1]))
 ##    print("(%s,%s)," %(temp[2][0]+i*10,temp[2][1]))
 ##    print("(%s,%s)," %(temp[3][0]+i*10,temp[3][1]))

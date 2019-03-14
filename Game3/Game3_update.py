@@ -58,6 +58,11 @@ class MainWndProc:
         self.Move()
         self.Update_Statsblock()
         self.Update_windows()
+##        if self.step%30==0:# or self.step%30==25:
+##            if self.vwin.Player1.step<3:
+##                self.vwin.Player1.step=self.vwin.Player1.step+1
+##            else:
+##                self.vwin.Player1.step=0
         if self.step==100:
             self.step=0
             if self.map_all[0][0]=="G1----":
@@ -80,7 +85,7 @@ class MainWndProc:
         ##Restrict the mouse cursor to the client area. This
         ##ensures that the window recieves a matching
         ##WM_LBUTTONUP message
-        windll.user32.ClipCursor(pointer(self.vwin.rcClient))
+##        windll.user32.ClipCursor(pointer(self.vwin.rcClient))
 ##        self.vwin.pt.x=self.lParam.x
 ##        self.vwin.pt.y=self.lParam.y
         print("pointx ",self.lParam.x,"pointy ",self.lParam.y)
@@ -113,6 +118,7 @@ class MainWndProc:
             self.vwin.variables.NUM7_key_last=wf.NUM7_KEY
         return 0
     def WM_KEY_UP(self):
+        self.vwin.Player1.Animate_step(False)
         if self.wParam==wf.S_KEY:
             self.vwin.variables.S_key_last=wf.S_KEY
         elif self.wParam==wf.A_KEY:
@@ -193,31 +199,11 @@ class MainWndProc:
     
     def Update_windows(self):
         ##PLAYER1##
-        shiftedUL=POINT(wf.shiftx,wf.shifty)                    ##Define where in the player's window the character is placed
         self.Update_mem_background(0)                           ##Update the background
-        Player1_Rgn={"right":self.vwin.variables.Player1_animation_Rgn.right[0],"left":self.vwin.variables.Player1_animation_Rgn.left[0],#Define dictionary for access directional regions
-                    "up":self.vwin.variables.Player1_animation_Rgn.up[0],"down":self.vwin.variables.Player1_animation_Rgn.down[0]}
-        windll.gdi32.OffsetRgn(Player1_Rgn[self.vwin.variables.player1_direction],shiftedUL)                                            ##Shift the region for drawing player1
-        windll.gdi32.SelectClipRgn(self.vwin.dict_background_hdc["mem_main1"],Player1_Rgn[self.vwin.variables.player1_direction])       ##Select the clipping region
-        ##PLACE CHARACTER 1
-        windll.gdi32.BitBlt(self.vwin.dict_background_hdc["mem_main1"],shiftedUL,wf.character_width,wf.character_height,                ##Draw Player1 in the player's window
-                            self.vwin.dict_character_hdc["character1_"+self.vwin.variables.player1_direction],0,0,wf.SRCCOPY)
-        windll.gdi32.SelectClipRgn(self.vwin.dict_background_hdc["mem_main1"],None)                                                     ##Remove the clipping region
-        windll.gdi32.OffsetRgn(Player1_Rgn[self.vwin.variables.player1_direction],-shiftedUL.x,-shiftedUL.y)                            ##Return region to original position
         windll.gdi32.BitBlt(self.vwin.dict_background_hdc["mem_main_show"],0,0,wf.main_window_w,wf.main_window_h,                            ##Place the players window in memory
                             self.vwin.dict_background_hdc["mem_main1"],POINT(),wf.SRCCOPY)
         ##PLAYER2##
-        shiftedUL_2=POINT(wf.shiftx,wf.shifty)                  ##Define where in the player's window the character is placed
         self.Update_mem_background(1)                           ##Update the background
-        Player2_Rgn={"right":self.vwin.variables.Player2_animation_Rgn.right[0],"left":self.vwin.variables.Player2_animation_Rgn.left[0],#Define dictionary for access directional regions
-                    "up":self.vwin.variables.Player2_animation_Rgn.up[0],"down":self.vwin.variables.Player2_animation_Rgn.down[0]}
-        windll.gdi32.OffsetRgn(Player2_Rgn[self.vwin.variables.player2_direction],shiftedUL_2)                                          ##Shift the region for drawing player2
-        windll.gdi32.SelectClipRgn(self.vwin.dict_background_hdc["mem_main2"],Player2_Rgn[self.vwin.variables.player2_direction])       ##Select the region for clipping the drawing
-        ##PLACE CHARACTER 2
-        windll.gdi32.BitBlt(self.vwin.dict_background_hdc["mem_main2"],shiftedUL_2,wf.character_width,wf.character_height,              ##Draw Player2 in the player's window
-                            self.vwin.dict_character_hdc["character2_"+self.vwin.variables.player2_direction],0,0,wf.SRCCOPY)
-        windll.gdi32.SelectClipRgn(self.vwin.dict_background_hdc["mem_main2"],None)                                                     ##Remove the clipping region
-        windll.gdi32.OffsetRgn(Player2_Rgn[self.vwin.variables.player2_direction],-shiftedUL_2.x,-shiftedUL_2.y)                        ##Return the region to its original position
         windll.gdi32.BitBlt(self.vwin.dict_background_hdc["mem_main_show"],800,0,wf.main_window_w,wf.main_window_h,                          ##Copy the players window in memory
                             self.vwin.dict_background_hdc["mem_main2"],POINT(),wf.SRCCOPY)
         ##ADD STATS BLOCK##

@@ -6,56 +6,63 @@ from ctypes.wintypes import *
 def MOVE(cs,map_all):
 
     ##Temporarly store player positions before move##
-    windowULt=POINT(cs.variables.Player1_window.windowUL.x,cs.variables.Player1_window.windowUL.y)
-    windowLRt=POINT(cs.variables.Player1_window.windowLR.x,cs.variables.Player1_window.windowLR.y)
-    windowULt_2=POINT(cs.variables.Player2_window.windowUL.x,cs.variables.Player2_window.windowUL.y)
-    windowLRt_2=POINT(cs.variables.Player2_window.windowLR.x,cs.variables.Player2_window.windowLR.y)
-    
+    position1=POINT(cs.Player1.position.x,cs.Player1.position.y)
+    position2=POINT(cs.Player2.position.x,cs.Player2.position.y)
+
     ##PLAYER1 KEYS##
+    direction=""
     if  cs.variables.S_key_last==wf.S_KEY_DOWN:
-        windowULt.y=windowULt.y+10
-        windowLRt.y=windowLRt.y+10
+        position1.y=position1.y+10
+        direction="down"
         cs.variables.player1_direction="down"
     if cs.variables.A_key_last==wf.A_KEY_DOWN:
-        windowULt.x=windowULt.x-10
-        windowLRt.x=windowLRt.x-10
+        position1.x=position1.x-10
+        direction="left"
         cs.variables.player1_direction="left"
     if cs.variables.D_key_last==wf.D_KEY_DOWN:
-        windowULt.x=windowULt.x+10
-        windowLRt.x=windowLRt.x+10
+        position1.x=position1.x+10
+        direction="right"
         cs.variables.player1_direction="right"
     if cs.variables.W_key_last==wf.W_KEY_DOWN:
-        windowULt.y=windowULt.y-10
-        windowLRt.y=windowLRt.y-10
+        position1.y=position1.y-10
+        direction="up"
         cs.variables.player1_direction="up"
 
+    ##If player is moving update the direction and the animation step##
+    if direction!="":
+        cs.Player1.Update_direction(direction)
+        cs.Player1.Animate_step(True)
     ##PLAYER2 KEYS##
     if cs.variables.NUM5_key_last==wf.NUM5_KEY_DOWN:
-       windowULt_2.y=windowULt_2.y+10
-       windowLRt_2.y=windowLRt_2.y+10
-       cs.variables.player2_direction="down"
+        position2.y=position2.y+10
+        cs.Player2.direction="down"
+        cs.variables.player2_direction="down"
     if cs.variables.NUM4_key_last==wf.NUM4_KEY_DOWN:
-        windowULt_2.x=windowULt_2.x-10
-        windowLRt_2.x=windowLRt_2.x-10
+        position2.x=position2.x-10
+        cs.Player2.direction="left"
         cs.variables.player2_direction="left"
     if cs.variables.NUM6_key_last==wf.NUM6_KEY_DOWN:
-        windowULt_2.x=windowULt_2.x+10
-        windowLRt_2.x=windowLRt_2.x+10
+        position2.x=position2.x+10
+        cs.Player2.direction="right"
         cs.variables.player2_direction="right"
     if cs.variables.NUM8_key_last==wf.NUM8_KEY_DOWN:
-        windowULt_2.y=windowULt_2.y-10
-        windowLRt_2.y=windowLRt_2.y-10
+        position2.y=position2.y-10
+        cs.Player2.direction="up"
         cs.variables.player2_direction="up"
+    ##IF BUILDING##
+    if cs.variables.Tool_Sel.Player2_selection==wf.Empty_Hand:
+        position2=POINT(cs.Player2.position.x,cs.Player2.position.y)
+
+    if cs.variables.Tool_Sel.Player1_selection==wf.Empty_Hand:
+        position1=POINT(cs.Player1.position.x,cs.Player1.position.y)
 
     #################
     ##CHECK PLAYERS##
     #################
     gridposition=RECT()                                ##Use to determine what tiles are being viewed on the map##
-    windowLRts={0:windowLRt,1:windowLRt_2}
-    windowULts={0:windowULt,1:windowULt_2}
-    windowLRs={0:cs.variables.Player1_window.windowLR,1:cs.variables.Player2_window.windowLR}
-    windowULs={0:cs.variables.Player1_window.windowUL,1:cs.variables.Player2_window.windowUL}
+    positions=[position1,position2]
     player_directions={0:cs.variables.player1_direction,1:cs.variables.player2_direction}
+    Players={0:cs.Player1,1:cs.Player2}
     ##Check for object collisions in x or y directions##
     check_x=[True,True]
     check_y=[True,True]
@@ -64,25 +71,25 @@ def MOVE(cs,map_all):
     ##Use to limit to one button per player##
     Button=[False,False]
     
-    ##DEFINE RECTANGLES FOR COLLISIONS WITH OBJECTS##
-    rcTreeUL,rcTreeUR,rcTreeLL,rcTreeLR=POINT(),POINT(),POINT(),POINT()
-    rcWallUL,rcWallUR,rcWallLL,rcWallLR=POINT(),POINT(),POINT(),POINT()
 
     ##REPEAT PROCESS FOR BOTH PLAYERS
     for player in range(2):
         ##Convert player rectangle into grid position
-        gridposition.left=int(windowULts[player].x/wf.tile_w)
-        gridposition.top=int(windowULts[player].y/wf.tile_h)
-        gridposition.right=int(windowLRts[player].x/wf.tile_w)
-        gridposition.bottom=int(windowLRts[player].y/wf.tile_h)
-        
+        y_shift=-300
+        [UL,UR,LL,LR]=Players[player].Target_Box()
+        [ULt,URt,LLt,LRt]=Players[player].Target_Box_Shifted(positions[player].x,positions[player].y)
+        gridposition.left=int(ULt.x/wf.tile_w)
+        gridposition.top=int(ULt.y/wf.tile_h)
+        gridposition.right=int(LRt.x/wf.tile_w)
+        gridposition.bottom=int(LRt.y/wf.tile_h)
         ##LOOK AT TILES COVERED BY PLAYER CHARACTER AND ALL ADJACENT TILES##
+        check_temp=True
         for i in range(gridposition.left-1,gridposition.right+2):
             if i>=0:
-                for j in range(gridposition.top-1,gridposition.bottom+2):
+                for j in range(gridposition.top-2,gridposition.bottom+2):
                     if j>=0:
                         ##IF THE PLAYER IS IN THE TILE CHECK FOR COLLISION##
-                        if (i>=gridposition.left and i<=gridposition.right) and (j>=gridposition.top and j<=gridposition.bottom):
+                        if (i>=gridposition.left and i<=gridposition.right) and (j>=gridposition.top-2 and j<=gridposition.bottom):
                             ##map strings are GGOOBP check for objects
                             if map_all[i][j][2]!="-": ##First
                                 rcCollisionULt,rcCollisionURt,rcCollisionLLt,rcCollisionLRt=POINT(),POINT(),POINT(),POINT()
@@ -90,32 +97,50 @@ def MOVE(cs,map_all):
                                     ##Mark shifted tree rectangle
                                     rcCollisionULt,rcCollisionURt,rcCollisionLLt,rcCollisionLRt=cs.Tree1.Target_box(i*wf.tile_w,j*wf.tile_h)
                                 elif map_all[i][j][2]=="W":
-                                    rcWallUL=cs.variables.Wall_target_boxes[int(map_all[i][j][3])].WallUL
-                                    rcWallUR=cs.variables.Wall_target_boxes[int(map_all[i][j][3])].WallUR
-                                    rcWallLL=cs.variables.Wall_target_boxes[int(map_all[i][j][3])].WallLL
-                                    rcWallLR=cs.variables.Wall_target_boxes[int(map_all[i][j][3])].WallLR
-                                    ##Define shifted wall rectangle
-                                    rcCollisionULt.x,rcCollisionURt.x,rcCollisionLLt.x,rcCollisionLRt.x,=[rcWallUL.x+i*wf.tile_w,rcWallUR.x+i*wf.tile_w,rcWallLL.x+i*wf.tile_w,rcWallLR.x+i*wf.tile_w]
-                                    rcCollisionULt.y,rcCollisionURt.y,rcCollisionLLt.y,rcCollisionLRt.y,=[rcWallUL.y+j*wf.tile_h,rcWallUR.y+j*wf.tile_h,rcWallLL.y+j*wf.tile_h,rcWallLR.y+j*wf.tile_h]
+                                    ##Mark shifted wall rectangle
+                                    rcCollisionULt,rcCollisionURt,rcCollisionLLt,rcCollisionLRt=cs.Wall1.Target_box(i*wf.tile_w,j*wf.tile_h,int(map_all[i][j][3]))
                                 else:
                                     continue
                                 ##CHECK X and Y direction for collision##
-                                if rcCollisionULt.x>windowULts[player].x and rcCollisionULt.x<windowLRts[player].x:
-                                    if (rcCollisionULt.y>windowULs[player].y and rcCollisionULt.y<windowLRs[player].y) or (rcCollisionLLt.y>windowULs[player].y and rcCollisionLLt.y<windowLRs[player].y) or (rcCollisionULt.y<windowULs[player].y and rcCollisionLLt.y>windowLRs[player].y):
-                                        check_x[player]=False
-                                        windowULts[player].x=windowULs[player].x
-                                        windowLRts[player].x=windowLRs[player].x
-                                elif rcCollisionURt.x>windowULts[player].x and rcCollisionURt.x<windowLRts[player].x:
-                                    if (rcCollisionULt.y>windowULs[player].y and rcCollisionULt.y<windowLRs[player].y) or (rcCollisionLLt.y>windowULs[player].y and rcCollisionLLt.y<windowLRs[player].y) or (rcCollisionULt.y<windowULs[player].y and rcCollisionLLt.y>windowLRs[player].y):
-                                        check_x[player]=False
-                                        windowULts[player].x=windowULs[player].x
-                                        windowLRts[player].x=windowLRs[player].x
-                                if rcCollisionULt.y>windowULts[player].y and rcCollisionULt.y<windowLRts[player].y:
-                                    if (rcCollisionULt.x>windowULs[player].x and rcCollisionULt.x<windowLRs[player].x) or (rcCollisionURt.x>windowULs[player].x and rcCollisionURt.x<windowLRs[player].x) or (rcCollisionULt.x<windowULs[player].x and rcCollisionURt.x>windowLRs[player].x) :
+                                ##Check for intersection of the top and bottom of collision box and the left side of player##        
+                                if wf.check_intersection2(rcCollisionULt,rcCollisionURt,rcCollisionLLt,rcCollisionLRt,ULt,LLt):
+                                    if wf.check_intersection2(rcCollisionULt,rcCollisionURt,rcCollisionLLt,rcCollisionLRt,
+                                                              POINT(UL.x,ULt.y),POINT(LL.x,LLt.y)):
                                         check_y[player]=False
-                                elif rcCollisionLLt.y>windowULts[player].y and rcCollisionLLt.y<windowLRts[player].y:
-                                    if (rcCollisionULt.x>windowULs[player].x and rcCollisionULt.x<windowLRs[player].x) or (rcCollisionURt.x>windowULs[player].x and rcCollisionURt.x<windowLRs[player].x) or (rcCollisionULt.x<windowULs[player].x and rcCollisionURt.x>windowLRs[player].x) :
+                                        check_temp=False
+                                    elif wf.check_intersection2(rcCollisionULt,rcCollisionURt,rcCollisionLLt,rcCollisionLRt,
+                                                                POINT(ULt.x,UL.y),POINT(LLt.x,LL.y)):
+                                        check_x[player]=False
+                                        check_temp=False
+                                ##Check for intersection of the top and bottom of collision box and the right side of player
+                                elif wf.check_intersection2(rcCollisionULt,rcCollisionURt,rcCollisionLLt,rcCollisionLRt,URt,LRt):
+                                    if wf.check_intersection2(rcCollisionULt,rcCollisionURt,rcCollisionLLt,rcCollisionLRt,
+                                                              POINT(UR.x,URt.y),POINT(LR.x,LRt.y)):
                                         check_y[player]=False
+                                        check_temp=False
+                                    elif wf.check_intersection2(rcCollisionULt,rcCollisionURt,rcCollisionLLt,rcCollisionLRt,
+                                                                POINT(URt.x,UR.y),POINT(LRt.x,LR.y)):
+                                        check_x[player]=False
+                                        check_temp=False
+
+                                ##Check for intersection of the left and right side of the collision box and the top side of player
+                                if check_temp==True:
+                                    if wf.check_intersection2(rcCollisionULt,rcCollisionLLt,rcCollisionURt,rcCollisionLRt,ULt,URt):
+                                        if wf.check_intersection2(rcCollisionULt,rcCollisionLLt,rcCollisionURt,rcCollisionLRt,
+                                                                  POINT(ULt.x,UL.y),POINT(URt.x,UR.y)):
+                                            check_x[player]=False
+                                        elif wf.check_intersection2(rcCollisionULt,rcCollisionLLt,rcCollisionURt,rcCollisionLRt,
+                                                                    POINT(UL.x,ULt.y),POINT(UR.x,URt.y)):
+                                            check_y[player]=False
+                                    ##Check for intersection of the left and right side of the collision box and the bottom side of player
+                                    elif wf.check_intersection2(rcCollisionULt,rcCollisionLLt,rcCollisionURt,rcCollisionLRt,LLt,LRt):
+                                        if wf.check_intersection2(rcCollisionULt,rcCollisionLLt,rcCollisionURt,rcCollisionLRt,
+                                                                  POINT(LLt.x,LL.y),POINT(LRt.x,LR.y)):
+                                            check_x[player]=False
+                                        elif wf.check_intersection2(rcCollisionULt,rcCollisionLLt,rcCollisionURt,rcCollisionLRt,
+                                                                    POINT(LL.x,LLt.y),POINT(LR.x,LRt.y)):
+                                            check_y[player]=False
+
 
                                 ##REMOVE ALL BUTTONS THAT BELONG TO THE PLAYER##
                                 if map_all[i][j][4:]=="B"+str(player):
@@ -174,7 +199,7 @@ def MOVE(cs,map_all):
                                                 Button[player]=True
                                     elif player_directions[player]=="up":
                                         ##Check to see if this is bottom tile##
-                                        if j==gridposition.top-1 and i==gridposition.left:
+                                        if j==gridposition.top-2 and i==gridposition.left:
                                             ##If this is bottom tile check to see if there is a button, if there is do nothing
                                             if map_all[i][j][4]!="B":
                                                 ##If no button add it and remove button from all other tiles
@@ -206,22 +231,23 @@ def MOVE(cs,map_all):
 
     ##PLAYER1##
     if check_x[0]==True:
-        if windowULt.x>=0+wf.shiftx and windowLRt.x<=(wf.map_w-wf.shiftx):
-            cs.variables.Player1_window.windowUL.x=windowULt.x
-            cs.variables.Player1_window.windowLR.x=windowLRt.x
+        if position1.x>=0+wf.shiftx and (position1.x+wf.character_width)<=(wf.map_w-wf.shiftx):
+            cs.Player1.Update_Position(position1.x,cs.Player1.position.y)
+            cs.variables.Player1_window.windowUL.x=position1.x
     if check_y[0]==True:
-        if windowULt.y>=0+wf.shifty and windowLRt.y<=wf.map_h-wf.shifty:
-            cs.variables.Player1_window.windowUL.y=windowULt.y
-            cs.variables.Player1_window.windowLR.y=windowLRt.y
+        if position1.y>=0+wf.shifty and (position1.y+wf.character_height)<=wf.map_h-wf.shifty:
+            cs.Player1.Update_Position(cs.Player1.position.x,position1.y)
+            cs.variables.Player1_window.windowUL.y=position1.y
+
      ##PLAYER2##
     if check_x[1]==True:
-        if windowULt_2.x>=0+wf.shiftx and windowLRt_2.x<=(wf.map_w-wf.shiftx):
-            cs.variables.Player2_window.windowUL.x=windowULt_2.x
-            cs.variables.Player2_window.windowLR.x=windowLRt_2.x
+        if position2.x>=0+wf.shiftx and (position2.x+wf.character_width)<=(wf.map_w-wf.shiftx):
+            cs.Player2.Update_Position(position2.x,cs.Player2.position.y)
+            cs.variables.Player2_window.windowUL.x=position2.x
     if check_y[1]==True:
-        if windowULt_2.y>=0+wf.shifty and windowLRt_2.y<=wf.map_h-wf.shifty:
-            cs.variables.Player2_window.windowUL.y=windowULt_2.y
-            cs.variables.Player2_window.windowLR.y=windowLRt_2.y
+        if position2.y>=0+wf.shifty and (position2.y+wf.character_height)<=wf.map_h-wf.shifty:
+            cs.Player2.Update_Position(cs.Player2.position.x,position2.y)
+            cs.variables.Player2_window.windowUL.y=position2.y
     return 0
 
 ##test=ws.Variables_and_dictionaries()
