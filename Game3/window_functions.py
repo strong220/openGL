@@ -19,6 +19,23 @@ def Transform_points(points,rotation,x,y):
                 temp[row]=Rotation_matrix[row][col]*Points[col]+temp[row]
         temp0.append(POINT(int(temp[0]),int(temp[1])))
     out=points_out(*temp0)
+    return out
+
+def Transform_points_x(points,rotation,x,y):
+    theta=rotation*pi/180
+    Rotation_matrix=[[1,0,x],
+                     [0,cos(theta),y],
+                     [0,0,1]]
+    points_out=POINT*len(points)
+    temp0=[]
+    for i in range(len(points)):
+        Points=[points[i].x,points[i].y,1]
+        temp=[0,0]
+        for row in range(2):
+            for col in range(3):
+                temp[row]=Rotation_matrix[row][col]*Points[col]+temp[row]
+        temp0.append(POINT(int(temp[0]),int(temp[1])))
+    out=points_out(*temp0)
     return out       
 
 def ShiftRect(rcTemp,x,y):

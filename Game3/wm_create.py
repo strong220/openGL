@@ -36,7 +36,7 @@ def WM_CREATE(cs,hwnd,map_all):##USE CLASS VARIABLES
         cs.dict_character_hdc[hdc]=windll.gdi32.CreateCompatibleDC(cs.variables.hdc_show)   #Make hdc similar to the reference hdc
         windll.gdi32.SelectObject(cs.dict_character_hdc[hdc],cs.dict_character_hbmp[hbmp])  #Copy image into hdc
         
-    cs.Player1=Player1_Sprite(cs.variables.hdc_show,file_path_main)
+    cs.Player1=Player1_Sprite(cs.variables.hdc_show,file_path_main,hwnd)
     cs.Player2=Player2_Sprite(cs.variables.hdc_show,file_path_main)
     #Find GRASS files#
     grass_block1_file="Grass_1.bmp"
