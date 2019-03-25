@@ -91,10 +91,12 @@ class Player1_Sprite:
         [character1_up_file,Head1_backward_file,Neck1_backward_file,Body1_backward_file,
         Bicep1_backward_file,Bicep2_backward_file,Forearm1_backward_file,Forearm2_backward_file,
          Belt1_backward_file,Skirt1_backward_file,Shin1_backward_file,Shoe1_backward_file,
-         Forearm3_backward_file]=["Face_backward_1a.bmp","Head_backward_1a.bmp","Neck_forward_1a.bmp","Body_backward_1a.bmp",
+         Forearm3_backward_file,Forearm4_backward_file,Shoe2_backward_file,Shoe3_backward_file,
+         Belt2_backward_file,Belt3_backward_file]=["Face_backward_1a.bmp","Head_backward_1a.bmp","Neck_forward_1a.bmp","Body_backward_1a.bmp",
                                "Bicep_forward_left_1a.bmp","Bicep_forward_right_1a.bmp","Forearm_backward_1a.bmp","Forearm_backward_1b.bmp",
                                "Belt_backward_1a.bmp","Skirt_backward_1b.bmp","Shin_forward_1a.bmp","Shoe_backward_1a.bmp",
-                                  "Forearm_backward_1c.bmp"]
+                                  "Forearm_backward_1c.bmp","Forearm_backward_1d.bmp","Shoe_backward_1b.bmp","Shoe_backward_1c.bmp",
+                                                   "Belt_backward_1b.bmp","Belt_backward_1c.bmp"]
         [character1_right_file,Head1_right_file,Neck1_right_file,Body1_right_file,
          Forearm1_right_file,Bicep1_right_file,Belt1_right_file,Belt2_right_file,
          Belt3_right_file,Thigh1_right_file,Shin1_right_file,Skirt1_right_file,
@@ -127,9 +129,9 @@ class Player1_Sprite:
                               [character1_down_file,Neck1_forward_file,Head2_forward_file,Forearm3_forward_file,Forearm2_forward_file,Bicep1_forward_left_file,Bicep1_forward_right_file,Body1_forward_file,Skirt1_backward_file,Shoe3_forward_file,Shin1_forward_file,Shin1_forward_file,Thigh1_right_file,Thigh1_left_file,Skirt1_forward_file,Belt3_forward_file,Shoe2_forward_file],
                               [character1_down_file,Neck1_forward_file,Head2_forward_file,Forearm1_forward_file,Forearm2_forward_file,Bicep1_forward_left_file,Bicep1_forward_right_file,Body1_forward_file,Skirt1_backward_file,Shin1_forward_file,Shin1_forward_file,Thigh1_right_file,Thigh1_left_file,Skirt1_forward_file,Belt1_forward_file,Shoe1_forward_file,Shoe1_forward_file],
                               [character1_down_file,Neck1_forward_file,Head2_forward_file,Forearm1_forward_file,Forearm4_forward_file,Bicep1_forward_left_file,Bicep1_forward_right_file,Body1_forward_file,Skirt1_backward_file,Shoe3_forward_file,Shin1_forward_file,Shin1_forward_file,Thigh1_right_file,Thigh1_left_file,Skirt1_forward_file,Belt2_forward_file,Shoe2_forward_file],
-                              [character1_up_file,Neck1_backward_file,Head1_backward_file,Forearm3_backward_file,Forearm2_backward_file,Bicep1_backward_file,Bicep2_backward_file,Body1_backward_file,Shoe1_backward_file,Shin1_backward_file,Shin1_backward_file,Thigh1_right_file,Thigh1_left_file,Skirt1_backward_file,Belt1_backward_file,Shoe1_backward_file],
-                              [character1_up_file,Neck1_backward_file,Head1_backward_file,Forearm1_backward_file,Forearm2_backward_file,Bicep1_backward_file,Bicep2_backward_file,Body1_backward_file,Shin1_backward_file,Shin1_backward_file,Thigh1_right_file,Thigh1_left_file,Skirt1_backward_file,Belt1_backward_file,Shoe1_backward_file,Shoe1_backward_file],
-                              [character1_up_file,Neck1_backward_file,Head1_backward_file,Forearm1_backward_file,Forearm2_backward_file,Bicep1_backward_file,Bicep2_backward_file,Body1_backward_file,Shoe1_backward_file,Shin1_backward_file,Shin1_backward_file,Thigh1_right_file,Thigh1_left_file,Skirt1_backward_file,Belt1_backward_file,Shoe1_backward_file],
+                              [character1_up_file,Neck1_backward_file,Head1_backward_file,Forearm3_backward_file,Forearm2_backward_file,Body1_backward_file,Bicep1_backward_file,Bicep2_backward_file,Shoe3_backward_file,Shin1_backward_file,Shin1_backward_file,Thigh1_right_file,Thigh1_left_file,Skirt1_backward_file,Belt2_backward_file,Shoe2_backward_file],
+                              [character1_up_file,Neck1_backward_file,Head1_backward_file,Forearm1_backward_file,Forearm2_backward_file,Body1_backward_file,Bicep1_backward_file,Bicep2_backward_file,Shin1_backward_file,Shin1_backward_file,Thigh1_right_file,Thigh1_left_file,Skirt1_backward_file,Belt1_backward_file,Shoe1_backward_file,Shoe1_backward_file],
+                              [character1_up_file,Neck1_backward_file,Head1_backward_file,Forearm1_backward_file,Forearm4_backward_file,Body1_backward_file,Bicep1_backward_file,Bicep2_backward_file,Shoe3_backward_file,Shin1_backward_file,Shin1_backward_file,Thigh1_right_file,Thigh1_left_file,Skirt1_backward_file,Belt3_backward_file,Shoe2_backward_file],
                               [character1_right_file,Bicep1_right_file,Forearm2_right_file,Neck1_right_file,Head2_right_file,Body1_right_file,Shin1_right_file,Shin1_right_file,Thigh1_right_file,Thigh1_right_file,Skirt3_right_file,Belt3_right_file,Bicep1_right_file,Forearm1_right_file,Shoe1_right_file,Shoe1_right_file],
                               [character1_right_file,Bicep1_right_file,Forearm2_right_file,Neck1_right_file,Head2_right_file,Body1_right_file,Shin1_right_file,Shin1_right_file,Thigh1_right_file,Thigh1_right_file,Skirt1_right_file,Belt1_right_file,Bicep1_right_file,Forearm1_right_file,Shoe1_right_file,Shoe1_right_file],
                               [character1_right_file,Bicep1_right_file,Forearm2_right_file,Neck1_right_file,Head2_right_file,Body1_right_file,Shin1_right_file,Shin1_right_file,Thigh1_right_file,Thigh1_right_file,Skirt2_right_file,Belt2_right_file,Bicep1_right_file,Forearm1_right_file,Shoe1_right_file,Shoe1_right_file],
@@ -212,15 +214,7 @@ class Player1_Sprite:
         Shoe2_forward_points=[(13,0),(21,0),(26,1),(31,6),(34,13),(35,17),(35,20),(36,20),(36,22),(35,23),(35,24),(32,24),(32,26),(31,26),(31,28),(5,28),(5,26),(4,26),(4,24),(1,24),(1,22),(0,22),(1,16),(2,13),(5,6),(10,1),(12,1)]
         Shoe3a_forward_points=[(12,1),(13,0),(23,0),(24,1),(26,1),(29,4),(34,19),(35,21),(35,25),(36,25),(36,27),(35,27),(30,29),(25,30),(19,31),(17,31),(10,30),(5,30),(0,27),(6,8)]
         Shoe3b_forward_points=[(7,5),(12,1),(13,0),(23,0),(24,1),(26,1),(29,4),(34,19),(35,21),(35,25),(36,25),(36,27),(35,27),(30,29),(25,30),(19,31),(17,31),(10,30),(5,30),(0,27),(6,8)]
-        Body_forward_points=[(0,0),(99,0),(99,31),(81,122),(80,123),(78,131),(77,132),(77,133),(75,135),(70,140),(65,142),(55,145),(45,145),(39,143),(34,142),(28,139),(26,137),(25,137),(22,134),(20,131),(18,126),(0,27)]
-        ##        maximum=0
-##        for i in range(len(Skirt1_backward_points)):
-##            if Skirt1_backward_points[i][0]>maximum:
-##                maximum=Skirt1_backward_points[i][0]
-##        out=""
-##        for i in range(len(Skirt1_backward_points)):
-##            out=out+"("+str(maximum-Skirt1_backward_points[i][0])+","+str(Skirt1_backward_points[i][1])+"),"
-##        print(out)        
+        Body_forward_points=[(0,0),(99,0),(99,31),(81,122),(80,123),(78,131),(77,132),(77,133),(75,135),(70,140),(65,142),(55,145),(45,145),(39,143),(34,142),(28,139),(26,137),(25,137),(22,134),(20,131),(18,126),(0,27)]     
 
         out=[None,Neck_forward_points,Head_forward_points,Forearm1_forward_points,Forearm2_forward_points,Bicep_forward_left_points,Bicep_forward_right_points,Body_forward_points,Skirt1_backward_points,Shin1_forward_points,Shin1_forward_points,Thigh_right_points,Thigh_left_points,Skirt1_forward_points,Belt_forward_points,Shoe1_forward_points,Shoe1_forward_points]
         transforms=[[0,0,0],                                ##Canvas
@@ -329,15 +323,14 @@ class Player1_Sprite:
         Bicep_backward_right_points=[(13,0),(14,3),(6,10),(7,11),(3,14),(1,21),(0,26),(0,28),(1,33),(2,37),(4,38),(4,39),(10,45),(11,45),(13,47),(14,47),(17,50),(17,55),(19,55),(22,61),(25,62),(26,68),(27,75),(28,81),(29,82),(29,90),(34,95),(40,95),(44,94),(46,90),(46,84),(46,79),(45,75),(43,63),(42,58),(41,52),(41,50),(42,49),(40,47),(40,31),(38,29),(33,6),(31,4),(21,0)]
         Forearm1_backward_points=[(10,0),(14,1),(18,5),(19,8),(18,9),(19,35),(20,45),(25,44),(26,47),(27,51),(28,54),(29,57),(27,58),(13,62),(11,62),(8,61),(4,57),(3,54),(3,49),(1,17),(0,16),(0,11),(3,3),(5,1),(9,0)]
         Forearm2_backward_points=[(19,0),(15,1),(11,5),(10,8),(11,9),(10,35),(9,45),(4,44),(3,47),(2,51),(1,54),(0,57),(2,58),(16,62),(18,62),(21,61),(25,57),(26,54),(26,49),(28,17),(29,16),(29,11),(26,3),(24,1),(20,0)]
-        Belt_backward_points=[(62,0),(0,0),(0,21),(14,22),(16,22),(23,21),(30,20),(38,19),(44,19),(52,19),(60,18),(62,16)]
+        Belt_backward_points=[(0,0),(62,0),(64,26),(0,26)]
         Skirt2_backward_points=[(78,0),(20,0),(0,96),(0,98),(1,101),(3,103),(3,105),(11,107),(19,105),(21,103),(23,107),(26,110),(30,110),(32,108),(34,104),(36,106),(37,106),(38,107),(38,109),(39,109),(42,110),(46,110),(49,109),(50,109),(51,106),(54,101),(57,102),(58,103),(59,106),(60,107),(62,109),(65,110),(69,110),(72,109),(76,105),(76,103),(77,102),(78,99),(79,96),(83,105),(90,108),(98,106),(101,103),(103,98),(103,88)]
         Thigh_right_points=[(27,0),(28,7),(29,19),(30,35),(30,50),(29,71),(27,94),(25,98),(23,100),(19,101),(11,101),(9,99),(8,99),(7,98),(5,92),(3,86),(2,78),(1,71),(0,62),(0,32),(1,19),(2,11),(3,4),(4,0)]
         Thigh_left_points=[(3,0),(2,7),(1,19),(0,35),(0,50),(1,71),(3,94),(5,98),(7,100),(11,101),(19,101),(21,99),(22,99),(23,98),(25,92),(27,86),(28,78),(29,71),(30,62),(30,32),(29,19),(28,11),(27,4),(26,0)]
         Shin1_backward_points=[(11,0),(13,0),(16,1),(20,5),(21,8),(22,18),(23,19),(24,40),(23,41),(23,44),(21,60),(20,72),(20,76),(16,79),(13,80),(11,80),(8,79),(4,75),(4,73),(3,60),(1,45),(0,36),(0,32),(1,30),(1,24),(3,7),(4,5),(8,1)]
         Shoe1_backward_points=[(16,0),(20,0),(25,2),(31,8),(34,15),(36,22),(36,25),(0,25),(0,22),(1,21),(1,19),(2,15),(5,8),(11,2)]
-        Shoe2_forward_points=[(13,0),(21,0),(26,1),(31,6),(34,13),(35,17),(35,20),(36,20),(36,22),(35,23),(35,24),(32,24),(32,26),(31,26),(31,28),(5,28),(5,26),(4,26),(4,24),(1,24),(1,22),(0,22),(1,16),(2,13),(5,6),(10,1),(12,1)]
-        Shoe3a_forward_points=[(12,1),(13,0),(23,0),(24,1),(26,1),(29,4),(34,19),(35,21),(35,25),(36,25),(36,27),(35,27),(30,29),(25,30),(19,31),(17,31),(10,30),(5,30),(0,27),(6,8)]
-        Shoe3b_forward_points=[(7,5),(12,1),(13,0),(23,0),(24,1),(26,1),(29,4),(34,19),(35,21),(35,25),(36,25),(36,27),(35,27),(30,29),(25,30),(19,31),(17,31),(10,30),(5,30),(0,27),(6,8)]
+        Shoe2_backward_points=[(0,27),(1,21),(3,13),(8,8),(8,5),(11,2),(16,0),(20,0),(27,3),(27,4),(30,8),(30,9),(32,11),(34,16),(35,17),(35,24),(36,24),(36,27),(34,27),(33,28),(32,28),(31,29),(19,32),(15,31),(10,30),(6,29),(3,28)]
+        Shoe3_backward_points=[(15,0),(21,0),(26,1),(32,7),(33,10),(34,15),(36,20),(36,22),(35,23),(35,24),(33,26),(33,27),(32,28),(6,28),(4,26),(4,25),(3,24),(1,24),(0,20),(1,19),(3,11),(5,6),(10,1)]
         Body_backward_points=[(0,0),(99,0),(99,31),(81,122),(80,123),(78,131),(77,132),(77,133),(75,135),(70,140),(65,142),(55,145),(45,145),(39,143),(34,142),(28,139),(26,137),(25,137),(22,134),(20,131),(18,126),(0,27)]
 
         out=[None,Neck_backward_points,Head_backward_points,Forearm1_backward_points,Forearm2_backward_points,Body_backward_points,Bicep_backward_left_points,Bicep_backward_right_points,Shin1_backward_points,Shin1_backward_points,Thigh_right_points,Thigh_left_points,Skirt2_backward_points,Belt_backward_points,Shoe1_backward_points,Shoe1_backward_points]
@@ -360,90 +353,82 @@ class Player1_Sprite:
 
         ##Draw Character_UP##
         Draw_step(out,transforms,self.character_region[1],self.character_hdc[1])
-        out1=[None,Neck_backward_points,Head_backward_points,Forearm1_backward_points,Forearm2_backward_points,Bicep_backward_left_points,Bicep_backward_right_points,Body_backward_points,Shoe1_backward_points,Shin1_backward_points,Shin1_backward_points,Thigh_right_points,Thigh_left_points,Skirt2_backward_points,Belt_backward_points,Shoe1_backward_points]
+        out1=[None,Neck_backward_points,Head_backward_points,Forearm1_backward_points,Forearm2_backward_points,Body_backward_points,Bicep_backward_left_points,Bicep_backward_right_points,Shoe3_backward_points,Shin1_backward_points,Shin1_backward_points,Thigh_right_points,Thigh_left_points,Skirt2_backward_points,Belt_backward_points,Shoe2_backward_points]
         transforms2=[[0,0,0],                                ##Canvas
                     [0,int(wf.character_width/2-17),95],    ##Neck
                     [0,int(wf.character_width/2-42),0],     ##Head
                     [5,int(wf.character_width/2-78+18),200],##Forearm1
                     [5,int(wf.character_width/2+48-5),198], ##Forearm2
+                    [0,int(wf.character_width/2-50),120],   ##Body
                     [-7,10+5,120],                           ##Bicep left
                     [0,int(wf.character_width/2+30-5),120], ##Bicep right
-                    [0,int(wf.character_width/2-50),120],   ##Body
-                    [0,52,410],                             ##Shoe2
+                    [0,int(wf.character_width/2),410],      ##Shoe1
                     [0,int(wf.character_width/2-28),352],   ##Shin1
                     [0,int(wf.character_width/2+2),352],    ##Shin2
                     [0,int(wf.character_width/2-33),260],   ##Right thigh
                     [0,int(wf.character_width/2+2),260],    ##Left thigh
                     [0,int(wf.character_width/2-50),260],   ##Skirt in the front
                     [0,int(wf.character_width/2-32),248],   ##Belt
-                    [0,int(wf.character_width/2),410]]      ##Shoe1
+                    [0,52,410]]                             ##Shoe2
         transforms_x=[[0,0,0],                              ##Canvas
                       [0,0,0],                              ##Neck
                       [0,0,0],                              ##Head
                       [30,0,13],                             ##Forearm1
                       [30,0,18],                            ##Forearm2
+                      [0,0,0],                              ##Body
                       [40,0,33],                             ##Bicep left
                       [30,0,18],                            ##Bicep right
-                      [0,0,0],                              ##Body
-                      [0,0,-6],                             ##Shoe2
+                      [0,-4,-10],                             ##Shoe1
                       [15,0,-5],                            ##Shin1
                       [15,0,-5],                            ##Shin2
                       [20,0,15],                            ##Right thigh
                       [20,0,15],                            ##Left thigh
                       [0,0,0],                              ##Skirt in the front
                       [0,0,0],                              ##Belt
-                      [0,0,-3]]                             ##Shoe1
+                      [0,0,-6]]                             ##Shoe2
 
         ##Draw Character_UP##
         Draw_step(out1,transforms2,self.character_region[7],self.character_hdc[7],transforms_x)
 
         ##Draw Character_UP##
         Draw_step(out,transforms,self.character_region[8],self.character_hdc[8])
-        out2=[None,Neck_backward_points,Head_backward_points,Forearm1_backward_points,Forearm2_backward_points,Bicep_backward_left_points,Bicep_backward_right_points,Body_backward_points,Shoe1_backward_points,Shin1_backward_points,Shin1_backward_points,Thigh_right_points,Thigh_left_points,Skirt2_backward_points,Belt_backward_points,Shoe1_backward_points]
+        out2=[None,Neck_backward_points,Head_backward_points,Forearm1_backward_points,Forearm2_backward_points,Body_backward_points,Bicep_backward_left_points,Bicep_backward_right_points,Shoe3_backward_points,Shin1_backward_points,Shin1_backward_points,Thigh_right_points,Thigh_left_points,Skirt2_backward_points,Belt_backward_points,Shoe2_backward_points]
         transforms3=[[0,0,0],                                ##Canvas
                     [0,int(wf.character_width/2-17),95],    ##Neck
                     [0,int(wf.character_width/2-42),0],     ##Head
                     [-5,int(wf.character_width/2-78+5),200],##Forearm1
                     [-5,int(wf.character_width/2+48-18),198], ##Forearm2
+                    [0,int(wf.character_width/2-50),120],   ##Body
                     [0,10+5,120],                           ##Bicep left
                     [7,int(wf.character_width/2+30-5),120], ##Bicep right
-                    [0,int(wf.character_width/2-50),120],   ##Body
-                    [0,int(wf.character_width/2)-4,410],    ##Shoe1
+                    [0,52,410],      ##Shoe1
                     [0,int(wf.character_width/2-28),352],   ##Shin1
                     [0,int(wf.character_width/2+2),352],    ##Shin2
                     [0,int(wf.character_width/2-33),260],   ##Right thigh
                     [0,int(wf.character_width/2+2),260],    ##Left thigh
                     [0,int(wf.character_width/2-50),260],   ##Skirt in the front
                     [0,int(wf.character_width/2-32),248],   ##Belt
-                    [0,50,410]]                             ##Shoe2
+                    [0,int(wf.character_width/2),410]]                             ##Shoe2
         transforms_x=[[0,0,0],                              ##Canvas
                       [0,0,0],                              ##Neck
                       [0,0,0],                              ##Head
                       [30,0,18],                             ##Forearm1
                       [30,0,17],                            ##Forearm2
+                      [0,0,0],                              ##Body
                       [30,0,18],                             ##Bicep left
                       [40,0,28],                            ##Bicep right
-                      [0,0,0],                              ##Body
-                      [0,0,-6],                             ##Shoe2
+                      [0,0,-8],                             ##Shoe2
                       [15,0,-5],                            ##Shin1
                       [15,0,-5],                            ##Shin2
                       [20,0,15],                            ##Right thigh
                       [20,0,15],                            ##Left thigh
                       [0,0,0],                              ##Skirt in the front
                       [0,0,0],                              ##Belt
-                      [0,0,-3]]                             ##Shoe1
+                      [0,-2,-6]]                             ##Shoe1
 
 
         ##Draw Character_UP##
         Draw_step(out2,transforms3,self.character_region[9],self.character_hdc[9],transforms_x)
-##        Points=wf.REGION(19)
-        ##Character1_up##
-##        self.character_region[1][0]=wf.CreatePolygonRgn(Points,len(Points),wf.WINDING)
-##        for i in range(20,27):
-##            Points=wf.REGION(i)
-##            temp=wf.CreatePolygonRgn(Points,len(Points),wf.WINDING)
-##            windll.gdi32.CombineRgn(self.character_region[1][0],self.character_region[1][0],temp,wf.RGN_OR)
-##        self.character_region[1][1]=self.character_region[1][0]
 
         ##Character1_RIGHT##
         ##DEFINE INITIAL POINTS##
@@ -634,9 +619,9 @@ class Player1_Sprite:
         self.step=0
 
         ##RELEASE UNNEEDED HDCS##
-        for i in range(10):
-            for j in range(1,18):
-                if j<5 or (i>=4 and j<16) or ((i==2 or i==3) and j<11) or (i==0 and j<17):
+        for i in range(16):
+            for j in range(18):
+                if len(self.character_hbmp[i])>j:
                     ##Release HDC##
                     windll.user32.ReleaseDC(hwnd,self.character_hdc[i][j])                  #Make hdc similar to the reference hdc
         
@@ -683,7 +668,7 @@ class Player1_Sprite:
         position_new=POINT(self.position.x-reference_tile.x*wf.tile_w,
                            self.position.y-reference_tile.y*wf.tile_h)
         ##Copy Object onto tile
-        self.step=0
+##        self.step=3
         for j in range(1):
             i=self.dict_index_to_character["character"+str(int(self.step)+1)+"_"+self.direction]        ##Find the desired image
             windll.gdi32.OffsetRgn(self.character_region[i][j],                                         ##Shift the region to draw the character
