@@ -139,7 +139,7 @@ class Tree_Sprite_1:
         ##DEFINE REFERENCE POSITION##
         self.position=POINT(int(wf.tile_w/2-wf.tree1_w/2),wf.tile_h-wf.tree1_h)
 
-    def Target_box(self,x_shift,y_shift):
+    def Target_box(self,x_shift,y_shift,number=None):
         ##Return the shifted target box
         shiftedboxUL=POINT(self.tboxUL.x+x_shift,self.tboxUL.y+y_shift)
         shiftedboxUR=POINT(self.tboxUR.x+x_shift,self.tboxUR.y+y_shift)

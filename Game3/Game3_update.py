@@ -65,16 +65,16 @@ class MainWndProc:
 ##                self.vwin.Player1.step=0
         if self.step==100:
             self.step=0
-            if self.map_all[0][0]=="G1----":
-                self.map_all[0][0]="G2----"
+            if self.map_all[0][0]=="G1------":
+                self.map_all[0][0]="G2------"
             else:
-                self.map_all[0][0]="G1----"
+                self.map_all[0][0]="G1------"
             self.player1_window=False
             self.player2_window=False
             ##Add random trees##
             x=int(random.random()*wf.map_w/200)
             y=int(random.random()*wf.map_h/200)
-            self.map_all[x][y]="G1T---"
+            self.map_all[x][y]="G1T-----"
 
         return 0
         
@@ -118,7 +118,8 @@ class MainWndProc:
             self.vwin.variables.NUM7_key_last=wf.NUM7_KEY
         return 0
     def WM_KEY_UP(self):
-        self.vwin.Player1.Animate_step(False)
+##        self.vwin.Player1.Animate_step(False)
+##        self.vwin.Player2.Animate_step(False)
         if self.wParam==wf.S_KEY:
             self.vwin.variables.S_key_last=wf.S_KEY
         elif self.wParam==wf.A_KEY:
@@ -164,6 +165,7 @@ class MainWndProc:
         if self.wParam==wf.Q_KEY_DOWN or self.vwin.variables.Q_key_last==wf.Q_KEY_DOWN:
             self.vwin.variables.Q_key_last=wf.Q_KEY_DOWN
             self.vwin.variables.Tool_Sel.Player1_selection=(self.vwin.variables.Tool_Sel.Player1_selection+1)%2
+            self.vwin.Player1.Tool_selection=self.vwin.variables.Tool_Sel.Player1_selection                 
 
         ##PLAYER2 KEYS##
         if self.wParam==wf.NUM5_KEY_DOWN or self.vwin.variables.NUM5_key_last==wf.NUM5_KEY_DOWN:
@@ -183,11 +185,28 @@ class MainWndProc:
         if self.wParam==wf.NUM7_KEY_DOWN or self.vwin.variables.NUM7_key_last==wf.NUM7_KEY_DOWN:
             self.vwin.variables.NUM7_key_last=wf.NUM7_KEY_DOWN
             self.vwin.variables.Tool_Sel.Player2_selection=(self.vwin.variables.Tool_Sel.Player2_selection+1)%2
+            self.vwin.Player2.Tool_selection=self.vwin.variables.Tool_Sel.Player2_selection                 
         return
     
     def Move(self):
         ##Update Player Position##
-        MOVE(self.vwin,self.map_all)
+        inputs1=[self.vwin.variables.S_key_last==wf.S_KEY_DOWN,
+                 self.vwin.variables.W_key_last==wf.W_KEY_DOWN,
+                 self.vwin.variables.A_key_last==wf.A_KEY_DOWN,
+                 self.vwin.variables.D_key_last==wf.D_KEY_DOWN]
+        inputs2=[self.vwin.variables.NUM5_key_last==wf.NUM5_KEY_DOWN,
+                 self.vwin.variables.NUM8_key_last==wf.NUM8_KEY_DOWN,
+                 self.vwin.variables.NUM4_key_last==wf.NUM4_KEY_DOWN,
+                 self.vwin.variables.NUM6_key_last==wf.NUM6_KEY_DOWN]
+        objects=[[self.vwin.Tree1,"T"],
+                 [self.vwin.Wall1,"W"],
+                 [self.vwin.Player1,"P0-"],
+                 [self.vwin.Player2,"P1-"],
+                 [self.vwin.Player3,"P2-"]]
+        self.vwin.Player1.Move(inputs1,self.map_all,objects)
+        self.vwin.Player2.Move(inputs2,self.map_all,objects)
+        self.vwin.Player3.Auto_Move(self.map_all,objects)
+##        MOVE(self.vwin,self.map_all)
 
     def Update_Statsblock(self):
         UPDATE_STATSBLOCK(self.vwin)

@@ -11,6 +11,7 @@ def UPDATE_MEM_BACKGROUND(player,cs,map_all):       #It takes in the class varia
     tiles_build={"G1":"grass_block1_build","G2":"grass_block2"}
     Player_selection={0:cs.variables.Tool_Sel.Player1_selection,1:cs.variables.Tool_Sel.Player2_selection}          ##Define dictionary for selected player tool
     Player_window={0:cs.variables.Player1_window,1:cs.variables.Player2_window}
+    Player_window0={0:cs.Player1,1:cs.Player2}
     key_last={0:cs.variables.E_key_last,1:cs.variables.NUM9_key_last}                                               ##Define dictionary for keys pressed
     KEY_DOWN={0:wf.E_KEY_DOWN,1:wf.NUM9_KEY_DOWN}                                                                   ##Define dictionary for key down code
     button_text="E9"                                                                                                ##Define list of characters for printing on the buttons
@@ -28,6 +29,8 @@ def UPDATE_MEM_BACKGROUND(player,cs,map_all):       #It takes in the class varia
                 "up":Player_animation_Rgn[(player+1)%2].up,"down":Player_animation_Rgn[(player+1)%2].down}
     Player_direction={0:cs.variables.player1_direction,1:cs.variables.player2_direction}                            ##Define dictionary to track player directions
     ##IDENTIFY THE REFERENCE TILE IN THE UPPER LEFT CORNER
+    Player_window[player].windowUL.x=Player_window0[player].position.x
+    Player_window[player].windowUL.y=Player_window0[player].position.y
     shiftx=int((Player_window[player].windowUL.x-wf.shiftx)/wf.tile_w)
     shifty=int((Player_window[player].windowUL.y-wf.shifty)/wf.tile_h)
     ##STORE PREVIOUS REFERENCE TILE AND RECORD CURRENT REFERENCE
@@ -45,22 +48,80 @@ def UPDATE_MEM_BACKGROUND(player,cs,map_all):       #It takes in the class varia
                     temp=map_all[grid_position_x][grid_position_y]
                     ##ADD TILE##
                     position=POINT(i*wf.tile_w,j*wf.tile_h)
-                    if Player_selection[player]==wf.Empty_Hand:
+                    if Player_selection[player]==wf.Empty_Hand or map_all[grid_position_x][grid_position_y][6]!="-":
                         windll.gdi32.BitBlt(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],position,
                                         wf.tile_w,wf.tile_h,cs.dict_grass_hdc[tiles_build[temp[0:2]]],0,0,wf.SRCCOPY)
+##                        map_all[grid_position_x][grid_position_y]=map_all[grid_position_x][grid_position_y][:6]+"--"
                     else:
                         windll.gdi32.BitBlt(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],position,
                                             wf.tile_w,wf.tile_h,cs.dict_grass_hdc[tiles[temp[0:2]]],0,0,wf.SRCCOPY)
-    cs.Player1.Draw_Character(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],
-                                                  cs.variables.player_window_ULtile[player])
-    cs.Player2.Draw_Character(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],
-                                                  cs.variables.player_window_ULtile[player])
+##                        map_all[grid_position_x][grid_position_y]=map_all[grid_position_x][grid_position_y][:6]+"--"
+##    cs.Player1.Draw_Character(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],
+##                                                  cs.variables.player_window_ULtile[player])
+##    cs.Player2.Draw_Character(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],
+##                                                  cs.variables.player_window_ULtile[player])
     player1_drawn=False
     player2_drawn=False
+    characters=[cs.Player1,cs.Player2,cs.Player3]
+    characters2=[cs.Player1,cs.Player2,cs.Player3]
+    ##Sort Characters##
+    ###################################
+    ####---------------------------####
+    ####SORTER NEEDS TO BE IMPROVED####
+    ####---------------------------####
+    ###################################
+    temp=None
+    minimum_prev=None
+    minimum=characters[0]
+    for i in range(len(characters)):
+        ##Find minimum then remove
+        minimum=characters2[0]
+        for j in characters2:
+            if j.Target_box()[3].y<minimum.Target_box()[3].y:
+                ##Check sorted list##
+                check=False
+                if temp!=None:
+                    for k in temp:
+                        if k.Character==j.Character:
+                            check=True
+                if check==False:
+                    minimum=j
+        ##Create sorted list
+        if temp==None:
+            temp=[minimum]
+        else:
+            temp.append(minimum)
+        ##Remove from characters2
+        characters2=None
+        for j in range(len(characters)):
+            check=False
+            for k in range(len(temp)):
+                if characters[j].Character==temp[k].Character:
+                    check=True
+            if check==False:
+                if characters2==None:
+                    characters2=[characters[j]]
+                else:
+                    characters2.append(characters[j])
+                    
+    ##Return temp list
+    for i in range(len(temp)):
+        if characters2==None:
+            characters2=[temp[0]]
+        else:
+            characters2.append(temp[i])
+##        print(minimum.Character,minimum_prev)
+        
+    count=0
+##    print("list")
+##    for i in range(len(characters2)):
+##        print(characters2[i].Character)
     if (abs(temp_tile.x-cs.variables.player_window_ULtile[player].x)>=1 or abs(temp_tile.y-cs.variables.player_window_ULtile[player].y)>=1) or cs.variables.player_window[player]==False:
         for j in range(int(wf.backgrnd_window_h/wf.tile_h)):
+            count=0
             player1_drawn=False
             player2_drawn=False
+            drawn=[False,False,False]
             grid_position_y=shifty+j
             ##Objects in order of layers with respective upper box position##
             objectorder={0:"W3",1:"T-",2:"W0",3:"W1",4:"W2"}
@@ -76,20 +137,50 @@ def UPDATE_MEM_BACKGROUND(player,cs,map_all):       #It takes in the class varia
                             ##CHECK FOR TREE OBJECT##
                             tree_check=cs.Tree1.Draw_Tree(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],temp,i*wf.tile_w,j*wf.tile_h,Player_selection[player],player)
                             if tree_check>0:
-                                ##If button has been placed check for key press if button has been drawn##
+                                ##If button has been placed check for key press if button has been drawn and remove button from map_all##
+                                ##GGOOBPCC##
+                                map_all[grid_position_x][grid_position_y]=temp[0:4]+"--"+temp[6:]
                                 if key_last[player]==KEY_DOWN[player] and tree_check==1:
-                                    map_all[grid_position_x][grid_position_y]=temp[0:2]+"----"
+                                    map_all[grid_position_x][grid_position_y]=temp[0:2]+"----"+temp[6:]
                                     cs.variables.Num_trees_cut=cs.variables.Num_trees_cut+1
+                            ##CHECK CPU##
+                            tree_check=cs.Tree1.Draw_Tree(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],temp,i*wf.tile_w,j*wf.tile_h,wf.Axe,3)
+                            if tree_check>0:
+                                ##If button has been placed check for key press if button has been drawn and remove button from map_all##
+                                ##GGOOBPCC##
+                                map_all[grid_position_x][grid_position_y]=temp[0:4]+"--"+temp[6:]
+##                                if key_last[player]==KEY_DOWN[player] and tree_check==1:
+##                                    map_all[grid_position_x][grid_position_y]=temp[0:2]+"----"+temp[6:]
+##                                    cs.variables.Num_trees_cut=cs.variables.Num_trees_cut+1
                             ##CHECK FOR WALL OBJECT##
                             wall_check=cs.Wall1.Draw_Wall(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],temp,i*wf.tile_w,j*wf.tile_w,Player_selection[player],player)
-                if cs.Player1.Target_Box()[3].y>upperbound[k] and player1_drawn==False:
-                    cs.Player1.Draw_Character(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],
-                                          cs.variables.player_window_ULtile[player])
-                    player1_drawn=True
-                if cs.Player2.Target_Box()[3].y>upperbound[k] and player2_drawn==False:
-                    cs.Player2.Draw_Character(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],
-                                          cs.variables.player_window_ULtile[player])
-                    player2_drawn=True
+                ##Draw Characters##
+                while count<len(characters2):
+                    if characters2[count].Target_box()[3].y>upperbound[k] and drawn[count]==False:
+                        characters2[count].Draw_Character(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],
+                                                          cs.variables.player_window_ULtile[player])
+                        drawn[count]=True
+                        count=count+1
+                    else:
+                        count=count+1
+##                        print("here")
+####                if cs.Player1.Target_box()[3].y>upperbound[k] and player1_drawn==False:# and (cs.Player1.Target_box()[3].y>cs.Player2.Target_box()[3].y or player2_drawn==True):
+####                    cs.Player1.Draw_Character(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],
+####                                          cs.variables.player_window_ULtile[player])
+####                    player1_drawn=True
+##                    if cs.Player2.Target_box()[3].y>upperbound[k] and player2_drawn==False:
+##                        cs.Player2.Draw_Character(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],
+##                                              cs.variables.player_window_ULtile[player])
+##                        player2_drawn=True
+##                else:
+##                    if cs.Player2.Target_box()[3].y>upperbound[k] and player2_drawn==False:
+##                        cs.Player2.Draw_Character(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],
+##                                              cs.variables.player_window_ULtile[player])
+##                        player2_drawn=True
+##                    if cs.Player1.Target_box()[3].y>upperbound[k] and player1_drawn==False:
+##                        cs.Player1.Draw_Character(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],
+##                                              cs.variables.player_window_ULtile[player])
+##                        player1_drawn=True
 
         if Player_selection[player]==wf.Empty_Hand:
             for j in range(int(wf.backgrnd_window_h/wf.tile_h)):
@@ -126,10 +217,10 @@ def UPDATE_MEM_BACKGROUND(player,cs,map_all):       #It takes in the class varia
                             if key_last[player]==KEY_DOWN[player]:
                                 ##Build command##
                                 if cs.variables.Num_trees_cut>=0:
-                                    cs.variables.Num_trees_cut=cs.variables.Num_trees_cut                            ##Remove the resource needed for the wall
-                                    map_all[grid_position_x][grid_position_y]=temp[0:2]+"W"+wall_direction[Player_direction[player]]+"--"##Record wall placement
+                                    cs.variables.Num_trees_cut=cs.variables.Num_trees_cut-0                            ##Remove the resource needed for the wall
+                                    map_all[grid_position_x][grid_position_y]=temp[0:2]+"W"+wall_direction[Player_direction[player]]+"--"+temp[6:]##Record wall placement
                             else:
-                                map_all[grid_position_x][grid_position_y]=temp[0:2]+"----"##Record wall placement
+                                map_all[grid_position_x][grid_position_y]=temp[0:2]+"----"+temp[6:]##Record wall placement
         else:
             cs.variables.player1_window=True
         ##PLACE BACKGROUND IN PLAYER WINDOW##

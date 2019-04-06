@@ -620,7 +620,7 @@ class Player1_Sprite:
 
         ##RELEASE UNNEEDED HDCS##
         for i in range(16):
-            for j in range(18):
+            for j in range(1,18):
                 if len(self.character_hbmp[i])>j:
                     ##Release HDC##
                     windll.user32.ReleaseDC(hwnd,self.character_hdc[i][j])                  #Make hdc similar to the reference hdc

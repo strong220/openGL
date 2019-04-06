@@ -8,6 +8,9 @@ from Player1_Sprite import Player1_Sprite
 from Player2_Sprite import Player2_Sprite
 from ctypes import *
 from ctypes.wintypes import *
+from Character1 import Character1_Sprite
+from Character2 import Character2_Sprite
+from CPU_Character1 import CPU_Character1_Sprite
 
 def WM_CREATE(cs,hwnd,map_all):##USE CLASS VARIABLES
     file_path_main="C:\\Users\\fredstile\\Documents\\GitHub\\openGL\\images\\"
@@ -36,8 +39,11 @@ def WM_CREATE(cs,hwnd,map_all):##USE CLASS VARIABLES
         cs.dict_character_hdc[hdc]=windll.gdi32.CreateCompatibleDC(cs.variables.hdc_show)   #Make hdc similar to the reference hdc
         windll.gdi32.SelectObject(cs.dict_character_hdc[hdc],cs.dict_character_hbmp[hbmp])  #Copy image into hdc
         
-    cs.Player1=Player1_Sprite(cs.variables.hdc_show,file_path_main,hwnd)
-    cs.Player2=Player2_Sprite(cs.variables.hdc_show,file_path_main)
+##    cs.Player1=Player1_Sprite(cs.variables.hdc_show,file_path_main,hwnd)
+##    cs.Player2=Player2_Sprite(cs.variables.hdc_show,file_path_main)
+    cs.Player1=Character1_Sprite(cs.variables.hdc_show,file_path_main,hwnd,"0-")
+    cs.Player2=Character2_Sprite(cs.variables.hdc_show,file_path_main,hwnd,"1-")
+    cs.Player3=CPU_Character1_Sprite(cs.variables.hdc_show,file_path_main,hwnd,"2-")
     #Find GRASS files#
     grass_block1_file="Grass_1.bmp"
     grass_block2_file="Grass_2.bmp"
@@ -165,12 +171,12 @@ def WM_CREATE(cs,hwnd,map_all):##USE CLASS VARIABLES
     for i in range(int(wf.map_w/200)):
         for j in range(int(wf.map_h/200)):
             if i==0 or j==0 or i==int(wf.map_w/200)-1 or j==int(wf.map_h/200)-1:
-                map_all[i][j]="G1T---"
+                map_all[i][j]="G1T-----"
             elif i==5 and j>10 and j<20:
-                map_all[i][j]="G1--B1"
+                map_all[i][j]="G1W3----"
             else:
-                map_all[i][j]="G1----"
-    map_all[5][5]="G1T---"                      ##Temporary tree for testing
+                map_all[i][j]="G1------"
+    map_all[5][5]="G1T-----"                      ##Temporary tree for testing
     cs.variables.player_window[0]=False           #backgrounds have not been updated
     cs.variables.player_window[1]=False
     cs.variables.player_window_ULtile[0]=POINT()

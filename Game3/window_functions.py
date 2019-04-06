@@ -1,9 +1,80 @@
 ##THIS FILE CONTAINS ALL THE FUNCTIONS FOR UPDATING THE WINDOW
-import window_structures
+import window_structures as ws
 from ctypes import *
 from ctypes.wintypes import *
 from Points import *
 from math import *
+def Draw_step(All_points,All_transforms,All_Regions,All_hdc,x_axis=None):
+    #wf.CreatePolygonRgn(,len(Points),WINDING)
+    for i in range(1,len(All_points)):
+        x=100
+        y=100
+        x2=0
+        y2=0
+        for l in range(len(All_points[i])):
+            ##Find width
+            if All_points[i][l][0]<x:
+                x=All_points[i][l][0]
+            elif All_points[i][l][0]>x2:
+                x2=All_points[i][l][0]
+            ##Find height
+            if All_points[i][l][1]<y:
+                y=All_points[i][l][1]
+            elif All_points[i][l][1]>y2:
+                y2=All_points[i][l][1]
+        ##Transform points##
+        points=Transform_points(All_points[i],All_transforms[i][0],All_transforms[i][1],All_transforms[i][2])
+        temp=ws.XFORM()
+        temp1=ws.XFORM()
+        TRANSFORM(temp,All_transforms[i][0],All_transforms[i][1],All_transforms[i][2])
+        if x_axis!=None:
+            points=Transform_points_x(points,x_axis[i][0],x_axis[i][1],x_axis[i][2])
+            TRANSFORM_X(temp1,x_axis[i][0],x_axis[i][1],x_axis[i][2])
+        ##Create Regions##
+        All_Regions[i]=CreatePolygonRgn(points,len(points),WINDING)
+        if i==1:
+            All_Regions[0]=CreatePolygonRgn(points,len(points),WINDING)
+        else:
+            windll.gdi32.CombineRgn(All_Regions[0],All_Regions[0],All_Regions[i],RGN_OR)
+        ##Select Region##
+        windll.gdi32.SelectClipRgn(All_hdc[0],All_Regions[i])
+        ##Transform hdc##
+        windll.gdi32.SetWorldTransform(All_hdc[0],pointer(temp))
+        if x_axis!=None:
+            windll.gdi32.ModifyWorldTransform(All_hdc[0],pointer(temp1),MWT_RIGHTMULTIPLY)
+        windll.gdi32.StretchBlt(All_hdc[0],x,y,x2,y2,All_hdc[i],
+                        x,y,x2,y2,SRCCOPY)
+        windll.gdi32.ModifyWorldTransform(All_hdc[0],pointer(temp),MWT_IDENTITY)
+        windll.gdi32.SelectClipRgn(All_hdc[0],None)
+    return 0
+def REGION(points):
+    Rgn=POINT*len(points)
+    temp=[]
+    for i in range(len(points)):
+        temp.append(POINT(points[i][0],points[i][1]))
+    out=Rgn(*temp)
+    return out
+
+def TRANSFORM(temp,rotate,dx,dy):
+    rotate=pi/180*rotate
+    temp.eM11=cos(rotate)
+    temp.eM12=sin(rotate)
+    temp.eM21=-sin(rotate)
+    temp.eM22=cos(rotate)
+    temp.eDx=dx
+    temp.eDy=dy
+    return
+
+def TRANSFORM_X(temp,rotate,dx,dy):
+    rotate=pi/180*rotate
+    temp.eM11=1
+    temp.eM12=0
+    temp.eM21=0
+    temp.eM22=cos(rotate)
+    temp.eDx=dx
+    temp.eDy=dy
+    return
+
 def Transform_points(points,rotation,x,y):
     theta=rotation*pi/180
     Rotation_matrix=[[cos(theta),-sin(theta),x],
@@ -126,6 +197,21 @@ def Longsplit(number):
     high="".join(high)
     low="".join(low)
     return [int(high,0),int(low,0)]
+def MATMULT(vector,matrix):
+    col=len(vector)
+    rows=len(matrix)
+    result=None
+    for i in range(rows):
+        if i==0:
+            result=[[0]]
+        else:
+            result.append([0])
+        temp=0
+        for j in range(col):
+            temp=vector[j][0]*matrix[i][j]+temp
+        result[i][0]=temp
+    return result
+            
 
 ##DEFINE CONSTANTS
 PS_DOT=1
