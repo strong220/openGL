@@ -12,6 +12,7 @@ class Character_Sprite_Main(object):
         ##Create Name
         self.Character=None
         self.Step=0
+        self.Tool_selection=None
         ##Save hwnd##
         self.HWND=hwnd
         ##Define dictionaries for the character##
@@ -40,6 +41,14 @@ class Character_Sprite_Main(object):
         self.tile_position=POINT(int(self.position.x/wf.tile_w),int(self.position.y/wf.tile_h))
         self.direction="down"
         self.step=0
+        self.button_position=POINT(0,0)
+
+        ##DEFINE RESOURCE DICTIONARY##
+        self.resource={"Tree":0}
+
+        ##STAMINA AND OUT OF BOUNDS##
+        self.Stamina=100
+        self.out_of_bounds=False
 
     def Reference_Tile(self):
         #Reference Tile#
@@ -59,12 +68,117 @@ class Character_Sprite_Main(object):
             self.step=0
         return
 
-    def Update_Position(self,shiftx,shifty,Map=None):
-        self.position=POINT(shiftx,shifty)
-        self.tile_position=POINT(int(shiftx/wf.tile_w),int(shifty/wf.tile_h))
-        return 0
+    def Defense_Phase(self,map_all):
+        ##GGOOBPCC##
+        point=self.Target_box()[0]
+        x=int(point.x/wf.tile_w)
+        y=int(point.y/wf.tile_h)
+        string=map_all[x][y]
+        if string[4]=="A" and string[5]!=self.Character[0]:
+            self.out_of_bounds=True
 
-    def Move(self,inputs,map_all,objects):
+    def Update_Position(self,shiftx,shifty,map_all,key_press=False,collision=POINT(0,0)):
+        gridposition=RECT()
+        [UL,UR,LL,LR]=self.Target_box()
+        gridposition.left=int(UL.x/wf.tile_w)
+        gridposition.top=int(UL.y/wf.tile_h)
+        gridposition.right=int(LR.x/wf.tile_w)
+        gridposition.bottom=int(LR.y/wf.tile_h)
+        if self.Tool_selection!=wf.Empty_Hand:
+            self.position=POINT(shiftx,shifty)
+            ##Clear Previous position##
+            gridposition_new=RECT()
+            [UL,UR,LL,LR]=self.Target_box()
+            gridposition_new.left=int(UL.x/wf.tile_w)
+            gridposition_new.top=int(UL.y/wf.tile_h)
+            gridposition_new.right=int(LR.x/wf.tile_w)
+            gridposition_new.bottom=int(LR.y/wf.tile_h)
+            
+            ##Update tile position##
+            self.tile_position=POINT(int(shiftx/wf.tile_w),int(shifty/wf.tile_h))
+            ##Clear previous tiles##
+            if map_all[gridposition.left][gridposition.top][6]==self.Character[0]:
+                map_all[gridposition.left][gridposition.top]=map_all[gridposition.left][gridposition.top][0:6]+"--"
+            if map_all[gridposition.left][gridposition.bottom][6]==self.Character[0]:
+                map_all[gridposition.left][gridposition.bottom]=map_all[gridposition.left][gridposition.bottom][0:6]+"--"
+            if map_all[gridposition.right][gridposition.top][6]==self.Character[0]:
+                map_all[gridposition.right][gridposition.top]=map_all[gridposition.right][gridposition.top][0:6]+"--"
+            if map_all[gridposition.right][gridposition.bottom][6]==self.Character[0]:
+                map_all[gridposition.right][gridposition.bottom]=map_all[gridposition.right][gridposition.bottom][0:6]+"--"
+            ##Update Map all##
+            if map_all[gridposition_new.left][gridposition_new.top][6]=="-":
+                map_all[gridposition_new.left][gridposition_new.top]=map_all[gridposition_new.left][gridposition_new.top][0:6]+self.Character
+            if map_all[gridposition_new.left][gridposition_new.bottom][6]=="-":
+                map_all[gridposition_new.left][gridposition_new.bottom]=map_all[gridposition_new.left][gridposition_new.bottom][0:6]+self.Character
+            if map_all[gridposition_new.right][gridposition_new.top][6]=="-":
+                map_all[gridposition_new.right][gridposition_new.top]=map_all[gridposition_new.right][gridposition_new.top][0:6]+self.Character
+            if map_all[gridposition_new.right][gridposition_new.bottom][6]=="-":
+                map_all[gridposition_new.right][gridposition_new.bottom]=map_all[gridposition_new.right][gridposition_new.bottom][0:6]+self.Character
+            gridposition=gridposition_new
+            
+        ##Button_placement or selection##
+        ##Clear previous button##
+        map_all[self.button_position.x][self.button_position.y]=map_all[self.button_position.x][self.button_position.y][:4]+"--"+map_all[self.button_position.x][self.button_position.y][6:]
+        self.button_position=POINT(0,0)
+        ##Define dictionaries for button placements
+        shift=int((self.position.x%wf.tile_w)/wf.tile_w+.5)
+        shift2=int((self.position.y%wf.tile_h)/wf.tile_h+.65)
+        ##Dictionary for placing button for building##
+        checktiles={"up":[gridposition.left-1+int(self.Step),gridposition.top-2],
+                    "down":[gridposition.left-1+int(self.Step),gridposition.bottom+1],
+                    "left":[gridposition.left-1,gridposition.top-2+int(self.Step)],
+                    "right":[gridposition.right+1,gridposition.top-2+int(self.Step)]}
+        
+        #GGOOBPCC#
+        ##Building selection##
+        if self.Tool_selection==wf.Empty_Hand:
+            ##Check to make sure selected tile is in map##
+            if checktiles[self.direction][1]>=int(wf.map_h/200):
+                checktiles[self.direction][1]=int(wf.map_h/200)-1
+            temp=map_all[checktiles[self.direction][0]][checktiles[self.direction][1]]
+            if temp[5]=="-" and temp[2]=="-":
+                ##Update Map to show there is a button##
+                map_all[checktiles[self.direction][0]][checktiles[self.direction][1]]=temp[0:4]+"B"+self.Character[0]+temp[6:]
+                temp=map_all[checktiles[self.direction][0]][checktiles[self.direction][1]]
+                ##Record button placement##
+                self.button_position=POINT(checktiles[self.direction][0],checktiles[self.direction][1])
+            if temp[4:6]=="B"+self.Character[0] and temp[2]!=0:
+                ##Put in build request if key is pressed
+                if key_press==True and self.resource["Tree"]>=1:
+                    ##Define dictionary for marking walls##
+                    wall_direction={"right":"0","left":"1","up":"2","down":"3"}
+                    ##Record wall placement##
+                    map_all[checktiles[self.direction][0]][checktiles[self.direction][1]]=temp[0:2]+"W"+wall_direction[self.direction]+"--"+temp[6:]
+                    self.resource["Tree"]=self.resource["Tree"]-1
+        ##Selection of Adjacent objects##
+        else:
+            temp=map_all[collision.x][collision.y]
+            if temp[5]=="-" and (temp[2]!="-" or temp[6]!="-"):
+                ##Update Map to show there is a button##
+                map_all[collision.x][collision.y]=temp[0:4]+"B"+self.Character[0]+temp[6:]
+                temp=map_all[collision.x][collision.y]
+                ##Record button placement##
+                self.button_position=POINT(collision.x,collision.y)
+            if temp[4:6]=="B"+self.Character[0] and key_press==True:#and temp[2]!="-"
+                ##Check for tree##
+                if temp[2]=="T":
+                    ##Cut down Tree##
+                    map_all[collision.x][collision.y]=temp[0:2]+"----"+temp[6:]
+                    self.resource["Tree"]=self.resource["Tree"]+1
+                elif temp[2]=="W":
+                    ##Cut down wall##
+                    map_all[collision.x][collision.y]=temp[0:2]+"----"+temp[6:]
+                    self.resource["Tree"]=self.resource["Tree"]+5
+                else:
+                    ##Attempt attack##
+                    map_all[collision.x][collision.y]=temp[0:4]+"A"+self.Character[0]+temp[6:]
+                    
+        return self.resource
+
+    def Move(self,inputs,map_all,objects,key_press=False):
+        if self.out_of_bounds==True:
+            return self.resource
+        self.Defense_Phase(map_all)
         [down,up,left,right]=inputs
         [dy,dx]=[0,0]
         ##Update Direction##
@@ -105,12 +219,14 @@ class Character_Sprite_Main(object):
         rcCollisionULt,rcCollisionURt,rcCollisionLLt,rcCollisionLRt=POINT(),POINT(),POINT(),POINT()
         ##LOOK AT TILES COVERED BY PLAYER CHARACTER AND ALL ADJACENT TILES##
         check_temp=True
+        collision_point=POINT(0,0)#POINT(self.tile_position.x,self.tile_position.y)
         for i in range(gridposition.left,gridposition.right+1):
             for j in range(gridposition.top-1,gridposition.bottom+1):
                 if j>=0:
                 ##IF THE PLAYER IS IN THE TILE CHECK FOR COLLISION##
                 ##map strings are GGOOBPCC check for objects                        
                     for k in range(len(objects)):
+                        collision=False
 ##                        if map_all[i][j][2]==objects[k][1] or map_all[i][j][6:8]==objects[k][1] and objects[k][1]!=self.Character:
                         if map_all[i][j][2]==objects[k][1] or (map_all[i][j][6:8]!="--"  and objects[k][1][0]=="P") and objects[k][1][1:]!=self.Character:
                             if map_all[i][j][3]!="-":
@@ -124,20 +240,24 @@ class Character_Sprite_Main(object):
                                                           POINT(UL.x,ULt.y),POINT(LL.x,LLt.y)):
                                     check_y=False
                                     check_temp=False
+                                    collision=True
                                 elif wf.check_intersection2(rcCollisionULt,rcCollisionURt,rcCollisionLLt,rcCollisionLRt,
                                                             POINT(ULt.x,UL.y),POINT(LLt.x,LL.y)):
                                     check_x=False
                                     check_temp=False
+                                    collision=True
                             ##Check for intersection of the top and bottom of collision box and the right side of player
                             elif wf.check_intersection2(rcCollisionULt,rcCollisionURt,rcCollisionLLt,rcCollisionLRt,URt,LRt):
                                 if wf.check_intersection2(rcCollisionULt,rcCollisionURt,rcCollisionLLt,rcCollisionLRt,
                                                           POINT(UR.x,URt.y),POINT(LR.x,LRt.y)):
                                     check_y=False
                                     check_temp=False
+                                    collision=True
                                 elif wf.check_intersection2(rcCollisionULt,rcCollisionURt,rcCollisionLLt,rcCollisionLRt,
                                                             POINT(URt.x,UR.y),POINT(LRt.x,LR.y)):
                                     check_x=False
                                     check_temp=False
+                                    collision=True
 
                             ##Check for intersection of the left and right side of the collision box and the top side of player
                             if check_temp==True:
@@ -145,17 +265,24 @@ class Character_Sprite_Main(object):
                                     if wf.check_intersection2(rcCollisionULt,rcCollisionLLt,rcCollisionURt,rcCollisionLRt,
                                                               POINT(ULt.x,UL.y),POINT(URt.x,UR.y)):
                                         check_x=False
+                                        collision=True
                                     elif wf.check_intersection2(rcCollisionULt,rcCollisionLLt,rcCollisionURt,rcCollisionLRt,
                                                                 POINT(UL.x,ULt.y),POINT(UR.x,URt.y)):
                                         check_y=False
+                                        collision=True
                                 ##Check for intersection of the left and right side of the collision box and the bottom side of player
                                 elif wf.check_intersection2(rcCollisionULt,rcCollisionLLt,rcCollisionURt,rcCollisionLRt,LLt,LRt):
                                     if wf.check_intersection2(rcCollisionULt,rcCollisionLLt,rcCollisionURt,rcCollisionLRt,
                                                               POINT(LLt.x,LL.y),POINT(LRt.x,LR.y)):
                                         check_x=False
+                                        collision=True
                                     elif wf.check_intersection2(rcCollisionULt,rcCollisionLLt,rcCollisionURt,rcCollisionLRt,
                                                                 POINT(LL.x,LLt.y),POINT(LR.x,LRt.y)):
                                         check_y=False
+                                        collision=True
+                            if collision==True:
+                                collision_point.x=int(rcCollisionULt.x/wf.tile_w)
+                                collision_point.y=int(rcCollisionULt.y/wf.tile_h)
 
 
         ##########################
@@ -168,7 +295,7 @@ class Character_Sprite_Main(object):
         if check_y==False or (new_position.y<0+wf.shifty or (new_position.y+wf.character_height)>wf.map_h-wf.shifty):
                 new_position.y=self.position.y
                 
-        self.Update_Position(new_position.x,new_position.y,map_all)
+        return self.Update_Position(new_position.x,new_position.y,map_all,key_press,collision_point)
 
     def Target_Box_Shifted(self,shiftx,shifty):
         shifted_tboxUL=POINT(self.tboxUL.x+shiftx,self.tboxUL.y+shifty)
@@ -178,32 +305,35 @@ class Character_Sprite_Main(object):
         return [shifted_tboxUL,shifted_tboxUR,shifted_tboxLL,shifted_tboxLR]
     
     def Target_box(self,changex=None,changey=None,Type=None):
-        shiftx=self.position.x
-        shifty=self.position.y
-        shifted_tboxUL=POINT(self.tboxUL.x+shiftx,self.tboxUL.y+shifty)
-        shifted_tboxUR=POINT(self.tboxUR.x+shiftx,self.tboxUR.y+shifty)
-        shifted_tboxLL=POINT(self.tboxLL.x+shiftx,self.tboxLL.y+shifty)
-        shifted_tboxLR=POINT(self.tboxLR.x+shiftx,self.tboxLR.y+shifty)
-        return [shifted_tboxUL,shifted_tboxUR,shifted_tboxLL,shifted_tboxLR]
+        if self.out_of_bounds==False:
+            shiftx=self.position.x
+            shifty=self.position.y
+            shifted_tboxUL=POINT(self.tboxUL.x+shiftx,self.tboxUL.y+shifty)
+            shifted_tboxUR=POINT(self.tboxUR.x+shiftx,self.tboxUR.y+shifty)
+            shifted_tboxLL=POINT(self.tboxLL.x+shiftx,self.tboxLL.y+shifty)
+            shifted_tboxLR=POINT(self.tboxLR.x+shiftx,self.tboxLR.y+shifty)
+            return [shifted_tboxUL,shifted_tboxUR,shifted_tboxLL,shifted_tboxLR]
+        return [POINT(0,0),POINT(0,0),POINT(0,0),POINT(0,0)]
 
     def Draw_Character(self,hdc,reference_tile):
-        ##Shift the reference position to the desired tile##
-        position_new=POINT(self.position.x-reference_tile.x*wf.tile_w,
-                           self.position.y-reference_tile.y*wf.tile_h)
-        ##Find the desired image
-        i=self.dict_index_to_character[self.direction]        
+        if self.out_of_bounds==False:
+            ##Shift the reference position to the desired tile##
+            position_new=POINT(self.position.x-reference_tile.x*wf.tile_w,
+                               self.position.y-reference_tile.y*wf.tile_h)
+            ##Find the desired image
+            i=self.dict_index_to_character[self.direction]        
 
-        ##COPY OBJECT ONTO TILE##
-        windll.gdi32.OffsetRgn(self.character_region[i][int(self.step)],                                 ##Shift the region to draw the character
-                               position_new)
-        windll.gdi32.SelectClipRgn(hdc,self.character_region[i][int(self.step)])                         ##Select the shifted region for copying the image
-        windll.gdi32.BitBlt(hdc,position_new,wf.character_width+50,                                      ##Add Character to Background
-                            wf.character_height,self.character_hdc[i][int(self.step)],
-                            0,0,wf.SRCCOPY)
-        ##Reset class object and hdc##
-        windll.gdi32.SelectClipRgn(hdc,None)                                                             ##Remove clipping region
-        windll.gdi32.OffsetRgn(self.character_region[i][int(self.step)],-position_new.x,                 #Return Region to original positoin
-                                -position_new.y)
+            ##COPY OBJECT ONTO TILE##
+            windll.gdi32.OffsetRgn(self.character_region[i][int(self.step)],                                 ##Shift the region to draw the character
+                                   position_new)
+            windll.gdi32.SelectClipRgn(hdc,self.character_region[i][int(self.step)])                         ##Select the shifted region for copying the image
+            windll.gdi32.BitBlt(hdc,position_new,wf.character_width+50,                                      ##Add Character to Background
+                                wf.character_height,self.character_hdc[i][int(self.step)],
+                                0,0,wf.SRCCOPY)
+            ##Reset class object and hdc##
+            windll.gdi32.SelectClipRgn(hdc,None)                                                             ##Remove clipping region
+            windll.gdi32.OffsetRgn(self.character_region[i][int(self.step)],-position_new.x,                 #Return Region to original positoin
+                                    -position_new.y)
 
     def __del__(self):
         ##RELEASE ALL HANDLES##

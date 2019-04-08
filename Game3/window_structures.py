@@ -116,10 +116,10 @@ class Variables_and_dictionaries:
         self.dict_character_hdc={"character1_down":None,"character1_up":None,"character1_right":None,"character1_left":None,
                                    "character2_down":None,"character2_up":None,"character2_right":None,"character2_left":None}
         ##Grass block dictionaries##
-        self.dict_grass_files={"grass_block1":None,"grass_block2":None,"grass_block1_build":None}
-        self.dict_grass_hbmp={"grass_block1":None,"grass_block2":None,"grass_block1_build":None}
-        self.dict_grass_index={0:"grass_block1",1:"grass_block2",2:"grass_block1_build"}
-        self.dict_grass_hdc={"grass_block1":None,"grass_block2":None,"grass_block1_build":None}
+        self.dict_grass_files={"grass_block1":None,"grass_block2":None,"grass_block3":None,"grass_block1_build":None}
+        self.dict_grass_hbmp={"grass_block1":None,"grass_block2":None,"grass_block3":None,"grass_block1_build":None}
+        self.dict_grass_index={0:"grass_block1",1:"grass_block2",2:"grass_block3",3:"grass_block1_build"}
+        self.dict_grass_hdc={"grass_block1":None,"grass_block2":None,"grass_block3":None,"grass_block1_build":None}
         ##Button and token dictionaries##
         self.dict_token_files={"red_button":None,"purple_button":None,"tree_token":None,"axe_token":None,"empty_hand_token":None}
         self.dict_token_hbmp={"red_button":None,"purple_button":None,"tree_token":None,"axe_token":None,"empty_hand_token":None}

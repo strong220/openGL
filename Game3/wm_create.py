@@ -4,6 +4,7 @@ import window_functions as wf
 import window_structures as ws
 from Tree1_Sprite import Tree_Sprite_1
 from Wall_Sprite_1 import Wall_Sprite_1
+from Build_Button_Sprite_1 import Build_Button_Sprite_1
 from Player1_Sprite import Player1_Sprite
 from Player2_Sprite import Player2_Sprite
 from ctypes import *
@@ -19,38 +20,20 @@ def WM_CREATE(cs,hwnd,map_all):##USE CLASS VARIABLES
     ###################
     cs.variables.hdc_show=windll.user32.GetDC(hwnd)    ##Create the reference hdc from the window
     #Find CHARACTER Files#
-    character1_down_file="Face_forward_1a.bmp"
-    character1_up_file="Face_backward_1a.bmp"
-    character1_right_file="Face_right_1a.bmp"
-    character1_left_file="Face_left_1a.bmp"
-    character2_down_file="Face_forward_2a.bmp"
-    character2_up_file="Face_backward_2a.bmp"
-    character2_right_file="Face_right_2a.bmp"
-    character2_left_file="Face_left_2a.bmp"
-    cs.dict_character_files={"character1_down":character1_down_file,"character1_up":character1_up_file,"character1_right":character1_right_file,"character1_left":character1_left_file,
-                     "character2_down":character2_down_file,"character2_up":character2_up_file,"character2_right":character2_right_file,"character2_left":character2_left_file}
-    #Load character files, assign pointers, and store pointers in dictionary
-    for i in range(8):
-        file=cs.dict_character_index[i]
-        hbmp=cs.dict_character_index[i]
-        hdc=cs.dict_character_index[i]
-        cs.dict_character_hbmp[hbmp]=wf.LoadImage(c_void_p(),LPCWSTR(file_path_main+cs.dict_character_files[file]),wf.IMAGE_BITMAP,0,0,8192|wf.LR_DEFAULTSIZE|wf.LR_LOADFROMFILE)
-        ##Create HDC##
-        cs.dict_character_hdc[hdc]=windll.gdi32.CreateCompatibleDC(cs.variables.hdc_show)   #Make hdc similar to the reference hdc
-        windll.gdi32.SelectObject(cs.dict_character_hdc[hdc],cs.dict_character_hbmp[hbmp])  #Copy image into hdc
-        
-##    cs.Player1=Player1_Sprite(cs.variables.hdc_show,file_path_main,hwnd)
-##    cs.Player2=Player2_Sprite(cs.variables.hdc_show,file_path_main)
     cs.Player1=Character1_Sprite(cs.variables.hdc_show,file_path_main,hwnd,"0-")
+    cs.Player1.Tool_selection=wf.Axe
     cs.Player2=Character2_Sprite(cs.variables.hdc_show,file_path_main,hwnd,"1-")
+    cs.Player2.Tool_selection=wf.Axe
     cs.Player3=CPU_Character1_Sprite(cs.variables.hdc_show,file_path_main,hwnd,"2-")
+    cs.Player3.Tool_selection=wf.Axe
     #Find GRASS files#
     grass_block1_file="Grass_1.bmp"
     grass_block2_file="Grass_2.bmp"
+    grass_block3_file="Grass_3.bmp"
     grass_block1_build_file="Grass_1_build.bmp"
-    cs.dict_grass_files={"grass_block1":grass_block1_file,"grass_block2":grass_block2_file,"grass_block1_build":grass_block1_build_file}
+    cs.dict_grass_files={"grass_block1":grass_block1_file,"grass_block2":grass_block2_file,"grass_block3":grass_block3_file,"grass_block1_build":grass_block1_build_file}
     #Load grass files, assign pointers, and store pointers in dictionary
-    for i in range(3):
+    for i in range(4):
         file=cs.dict_grass_index[i]
         hbmp=cs.dict_grass_index[i]
         hdc=cs.dict_grass_index[i]
@@ -61,7 +44,8 @@ def WM_CREATE(cs,hwnd,map_all):##USE CLASS VARIABLES
 
     #Load OBJECTS#
     cs.Tree1=Tree_Sprite_1(cs.variables.hdc_show,file_path_main)
-    cs.Wall1=Wall_Sprite_1(cs.variables.hdc_show,file_path_main)
+    cs.Wall1=[Wall_Sprite_1(cs.variables.hdc_show,file_path_main,0),Wall_Sprite_1(cs.variables.hdc_show,file_path_main,1),Wall_Sprite_1(cs.variables.hdc_show,file_path_main,2),Wall_Sprite_1(cs.variables.hdc_show,file_path_main,3)]
+    cs.Build_Button1=Build_Button_Sprite_1(cs.variables.hdc_show,file_path_main)
 
     #Find Button and Token files#
     red_button_file="Red_button.bmp"

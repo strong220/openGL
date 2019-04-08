@@ -147,7 +147,7 @@ class Tree_Sprite_1:
         shiftedboxLR=POINT(self.tboxLR.x+x_shift,self.tboxLR.y+y_shift)
         return [shiftedboxUL,shiftedboxUR,shiftedboxLL,shiftedboxLR]
 
-    def Draw_Tree(self,hdc,object_string,x_shift,y_shift,player_selection,player):
+    def Draw(self,hdc,object_string,x_shift,y_shift,Player):
         ##IF TILE NEEDS OBJECT THEN ADD##
         text=["E","9"]
         if object_string[2]=="T":
@@ -161,12 +161,12 @@ class Tree_Sprite_1:
             windll.gdi32.SelectClipRgn(hdc,None)                                                            ##Remove Clipping Region
             windll.gdi32.OffsetRgn(self.Region,-position_new.x,-position_new.y)                             ##Return the region back
             ##CHECK TO SEE IF BUTTON NEEDS TO BE DRAWN##
-            if object_string[4]=="B" and player_selection==wf.Axe and player==int(object_string[5]):
+            if object_string[4]=="B" and Player.Tool_selection==wf.Axe and Player.Character[0]==object_string[5]:
                 ##Position the button##
                 position_new.x=position_new.x+int(wf.tile_w/2)
                 position_new.y=position_new.y+wf.tile_h-40
                 ##DRAW BUTTON##
-                self.button.Draw_Button(hdc,position_new.x,position_new.y,text[player])
+                self.button.Draw_Button(hdc,position_new.x,position_new.y,text[int(Player.Character[0])])
                 ##Return 1 if button was drawn
                 return 1
             else:

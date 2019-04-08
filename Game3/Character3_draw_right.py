@@ -10,8 +10,8 @@ def Draw_RIGHT(hdc_main,file_path_main,hwnd):
          Forearm1_right_file,Bicep1_right_file,Belt1_right_file,Belt2_right_file,
          Belt3_right_file,Thigh1_right_file,Shin1_right_file,Skirt1_right_file,
          Shoe1_right_file,Skirt2_right_file,Skirt3_right_file,Forearm2_right_file,
-         Head2_right_file]=["Face_right_1a.bmp","Head_right_1a.bmp","Neck_right_1a.bmp","Body_right_1a.bmp",
-                            "Forearm_right_1a.bmp","Bicep_right_1a.bmp","Belt_right_1a.bmp","Belt_right_1b.bmp",
+         Head2_right_file]=["Face_right_1a.bmp","Head_right_1a.bmp","Neck_right_1a.bmp","Body_right_3a.bmp",
+                            "Forearm_right_1a.bmp","Bicep_right_3a.bmp","Belt_right_1a.bmp","Belt_right_1b.bmp",
                             "Belt_right_1c.bmp","Thigh_right_1a.bmp","Shin_right_1a.bmp","Skirt_right_1a.bmp",
                             "Shoe_right_1a.bmp","Skirt_right_1b.bmp","Skirt_right_1c.bmp","Forearm_right_1b.bmp","Head_right_1b.bmp"]
 

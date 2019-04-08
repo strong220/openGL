@@ -10,8 +10,8 @@ def Draw_LEFT(hdc_main,file_path_main,hwnd):
          Forearm1_left_file,Bicep1_left_file,Belt1_left_file,Belt2_left_file,
          Belt3_left_file,Thigh1_left_file,Shin1_left_file,Skirt1_left_file,
          Shoe1_left_file,Skirt2_left_file,Skirt3_left_file,Forearm2_left_file,
-         Head2_left_file]=["Face_left_1a.bmp","Head_left_1a.bmp","Neck_left_1a.bmp","Body_left_1a.bmp",
-                           "Forearm_left_1a.bmp","Bicep_left_1a.bmp","Belt_left_1a.bmp","Belt_left_1b.bmp",
+         Head2_left_file]=["Face_left_1a.bmp","Head_left_1a.bmp","Neck_left_1a.bmp","Body_left_3a.bmp",
+                           "Forearm_left_1a.bmp","Bicep_left_3a.bmp","Belt_left_1a.bmp","Belt_left_1b.bmp",
                            "Belt_left_1c.bmp","Thigh_left_1a.bmp","Shin_left_1a.bmp","Skirt_left_1a.bmp",
                            "Shoe_left_1a.bmp","Skirt_left_1b.bmp","Skirt_left_1c.bmp","Forearm_left_1b.bmp","Head_left_1b.bmp"]
 

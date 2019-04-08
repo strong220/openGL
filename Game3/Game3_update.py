@@ -13,6 +13,7 @@ from update_mem_background import UPDATE_MEM_BACKGROUND
 
 class MainWndProc:
     def __init__(self,hwnd,uMsg,wParam,lParam,hInst):
+        self.resource={"Tree":0}
         self.hwnd=hwnd
         self.uMsg=uMsg
         self.wParam=wParam
@@ -66,7 +67,7 @@ class MainWndProc:
         if self.step==100:
             self.step=0
             if self.map_all[0][0]=="G1------":
-                self.map_all[0][0]="G2------"
+                self.map_all[0][0]="G3------"
             else:
                 self.map_all[0][0]="G1------"
             self.player1_window=False
@@ -194,17 +195,26 @@ class MainWndProc:
                  self.vwin.variables.W_key_last==wf.W_KEY_DOWN,
                  self.vwin.variables.A_key_last==wf.A_KEY_DOWN,
                  self.vwin.variables.D_key_last==wf.D_KEY_DOWN]
+        Player1_keypress=(self.wParam==wf.E_KEY_DOWN)
         inputs2=[self.vwin.variables.NUM5_key_last==wf.NUM5_KEY_DOWN,
                  self.vwin.variables.NUM8_key_last==wf.NUM8_KEY_DOWN,
                  self.vwin.variables.NUM4_key_last==wf.NUM4_KEY_DOWN,
                  self.vwin.variables.NUM6_key_last==wf.NUM6_KEY_DOWN]
+        Player2_keypress=(self.wParam==wf.NUM9_KEY_DOWN)
         objects=[[self.vwin.Tree1,"T"],
-                 [self.vwin.Wall1,"W"],
+                 [self.vwin.Wall1[0],"W"],
                  [self.vwin.Player1,"P0-"],
                  [self.vwin.Player2,"P1-"],
                  [self.vwin.Player3,"P2-"]]
-        self.vwin.Player1.Move(inputs1,self.map_all,objects)
-        self.vwin.Player2.Move(inputs2,self.map_all,objects)
+        self.vwin.Player1.resource=self.resource
+        self.resource=self.vwin.Player1.Move(inputs1,self.map_all,objects,Player1_keypress)
+##        if resource[0]=="T":
+##            self.vwin.variables.Num_trees_cut=self.vwin.variables.Num_trees_cut+1
+        self.vwin.Player2.resource=self.resource
+        self.resource=self.vwin.Player2.Move(inputs2,self.map_all,objects,Player2_keypress)
+        self.vwin.variables.Num_trees_cut=self.resource["Tree"]
+##        if resource[0]=="T":
+##            self.vwin.variables.Num_trees_cut=self.vwin.variables.Num_trees_cut+1
         self.vwin.Player3.Auto_Move(self.map_all,objects)
 ##        MOVE(self.vwin,self.map_all)
 

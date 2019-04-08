@@ -11,7 +11,7 @@ def Draw_UP(hdc_main,file_path_main,hwnd):
          Belt1_backward_file,Skirt1_backward_file,Shin1_backward_file,Shoe1_backward_file,
          Forearm3_backward_file,Forearm4_backward_file,Shoe2_backward_file,Shoe3_backward_file,
          Belt2_backward_file,Belt3_backward_file,Thigh1_right_file,Thigh1_left_file]=["Face_backward_1a.bmp","Head_backward_1a.bmp","Neck_forward_1a.bmp","Body_backward_3a.bmp",
-                                "Bicep_forward_left_1a.bmp","Bicep_forward_right_1a.bmp","Forearm_backward_1a.bmp","Forearm_backward_1b.bmp",
+                                "Bicep_forward_left_3a.bmp","Bicep_forward_right_3a.bmp","Forearm_backward_1a.bmp","Forearm_backward_1b.bmp",
                                 "Belt_backward_1a.bmp","Skirt_backward_1b.bmp","Shin_forward_1a.bmp","Shoe_backward_1a.bmp",
                                 "Forearm_backward_1c.bmp","Forearm_backward_1d.bmp","Shoe_backward_1b.bmp","Shoe_backward_1c.bmp",
                                 "Belt_backward_1b.bmp","Belt_backward_1c.bmp","Thigh_right_1a.bmp","Thigh_left_1a.bmp"]
