@@ -1,9 +1,20 @@
 ##THIS FILE CONTAINS ALL THE FUNCTIONS FOR UPDATING THE WINDOW
-import window_structures as ws
 from ctypes import *
 from ctypes.wintypes import *
 from Points import *
 from math import *
+
+##DEFINE ANY STRUCTURES NEEDED FOR THE FUNCTIONS##
+class XFORM(Structure):
+    _fields_=[("eM11",c_float),
+              ("eM12",c_float),
+              ("eM21",c_float),
+              ("eM22",c_float),
+              ("eDx",c_float),
+              ("eDy",c_float)]
+
+
+##DEFINE ANY FUNCTIONS##
 def Draw_step(All_points,All_transforms,All_Regions,All_hdc,x_axis=None):
     #wf.CreatePolygonRgn(,len(Points),WINDING)
     for i in range(1,len(All_points)):
@@ -24,8 +35,8 @@ def Draw_step(All_points,All_transforms,All_Regions,All_hdc,x_axis=None):
                 y2=All_points[i][l][1]
         ##Transform points##
         points=Transform_points(All_points[i],All_transforms[i][0],All_transforms[i][1],All_transforms[i][2])
-        temp=ws.XFORM()
-        temp1=ws.XFORM()
+        temp=XFORM()
+        temp1=XFORM()
         TRANSFORM(temp,All_transforms[i][0],All_transforms[i][1],All_transforms[i][2])
         if x_axis!=None:
             points=Transform_points_x(points,x_axis[i][0],x_axis[i][1],x_axis[i][2])

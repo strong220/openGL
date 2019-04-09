@@ -208,13 +208,9 @@ class MainWndProc:
                  [self.vwin.Player3,"P2-"]]
         self.vwin.Player1.resource=self.resource
         self.resource=self.vwin.Player1.Move(inputs1,self.map_all,objects,Player1_keypress)
-##        if resource[0]=="T":
-##            self.vwin.variables.Num_trees_cut=self.vwin.variables.Num_trees_cut+1
         self.vwin.Player2.resource=self.resource
         self.resource=self.vwin.Player2.Move(inputs2,self.map_all,objects,Player2_keypress)
         self.vwin.variables.Num_trees_cut=self.resource["Tree"]
-##        if resource[0]=="T":
-##            self.vwin.variables.Num_trees_cut=self.vwin.variables.Num_trees_cut+1
         self.vwin.Player3.Auto_Move(self.map_all,objects)
 ##        MOVE(self.vwin,self.map_all)
 

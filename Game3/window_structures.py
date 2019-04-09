@@ -3,8 +3,7 @@ from ctypes import *
 from ctypes.wintypes import *
 from Tree1_Sprite import Tree_Sprite_1
 from Wall_Sprite_1 import Wall_Sprite_1
-from Player1_Sprite import Player1_Sprite
-from Player2_Sprite import Player2_Sprite
+from Character_Sprite_Main import Character_Sprite_Main
 
 class XFORM(Structure):
     _fields_=[("eM11",c_float),
@@ -59,12 +58,14 @@ class Main_variables2(Structure):
     _fields_=[("hdc_show",HDC),                                     #This hdc is the handle for the window display
               ("player1_direction",c_wchar_p),                      #Remembers what the latest direction player1 is facing as a string
               ("player2_direction",c_wchar_p),                      #Remembers what the latest direction player2 is facing as a string
+              ("Stamina_Region",HRGN),
+              ("Stamina_hdc",HDC),
               ("Region_player1",HRGN),                              #Rectangle Region hit box
               ("Player1_animation_Rgn",Character_Region),           #This holds all regions needed for drawing player1
               ("Player2_animation_Rgn",Character_Region),           #This holds all regions needed for drawing player2
               ("Object_Rgn",Object_Regions),                        #This holds all regions needed for drawing objects
               ("Region_button",HRGN),                               #The region for round buttons
-              ("Region_token",HRGN*4),                              #The Regions for the different tokens
+              ("Region_token",HRGN*5),                              #The Regions for the different tokens
               ("Client_window",Client_window),                      #This defines the main window to allow clipping of the cursor
               ("Player1_window",Player_window),                     #This contains the points that define the left window
               ("Player2_window",Player_window),                     #This contains the points that define the right window
@@ -92,6 +93,8 @@ class Main_variables2(Structure):
               ("tree_token",c_bool),
               ("hpenDot",HPEN),
               ("hpenDot_black",HPEN),
+              ("Fill_color",HBRUSH),
+              ("Fill_color2",HBRUSH),
               ("axe_displayed",c_bool),
               ("Bkgnd_red_button",c_int),
               ("Bkgnd_purple_button",c_int),
@@ -100,10 +103,11 @@ class Main_variables2(Structure):
 class Variables_and_dictionaries:
     def __init__(self):
         self.variables=Main_variables2()
-        self.Player1=Player1_Sprite
-        self.Player2=Player2_Sprite
+        self.Player1=Character_Sprite_Main
+        self.Player2=Character_Sprite_Main
+        self.Player3=Character_Sprite_Main
         self.Tree1=Tree_Sprite_1
-        self.Wall1=Wall_Sprite_1
+        self.Wall1=[Wall_Sprite_1,Wall_Sprite_1,Wall_Sprite_1,Wall_Sprite_1]
         ##Character dictionaries##
         self.dict_character_files={"character1_down":None,"character1_up":None,"character1_right":None,"character1_left":None,
                                    "character2_down":None,"character2_up":None,"character2_right":None,"character2_left":None}
@@ -121,10 +125,10 @@ class Variables_and_dictionaries:
         self.dict_grass_index={0:"grass_block1",1:"grass_block2",2:"grass_block3",3:"grass_block1_build"}
         self.dict_grass_hdc={"grass_block1":None,"grass_block2":None,"grass_block3":None,"grass_block1_build":None}
         ##Button and token dictionaries##
-        self.dict_token_files={"red_button":None,"purple_button":None,"tree_token":None,"axe_token":None,"empty_hand_token":None}
-        self.dict_token_hbmp={"red_button":None,"purple_button":None,"tree_token":None,"axe_token":None,"empty_hand_token":None}
-        self.dict_token_index={0:"red_button",1:"purple_button",2:"tree_token",3:"axe_token",4:"empty_hand_token"}
-        self.dict_token_hdc={"red_button":None,"purple_button":None,"tree_token":None,"axe_token":None,"empty_hand_token":None}
+        self.dict_token_files={"red_button":None,"purple_button":None,"tree_token":None,"axe_token":None,"empty_hand_token":None,"stamina_meter":None}
+        self.dict_token_hbmp={"red_button":None,"purple_button":None,"tree_token":None,"axe_token":None,"empty_hand_token":None,"stamina_meter":None}
+        self.dict_token_index={0:"red_button",1:"purple_button",2:"tree_token",3:"axe_token",4:"empty_hand_token",5:"stamina_meter"}
+        self.dict_token_hdc={"red_button":None,"purple_button":None,"tree_token":None,"axe_token":None,"empty_hand_token":None,"stamina_meter":None}
         ##Background dictionaries##
         self.dict_background_files={"total_background":None,"mem_backgrnd1":None,"mem_backgrnd2":None,"mem_main1":None,
                               "mem_main2":None,"mem_main_show":None,"stats_block":None}

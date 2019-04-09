@@ -5,15 +5,15 @@ import window_structures as ws
 from Tree1_Sprite import Tree_Sprite_1
 from Wall_Sprite_1 import Wall_Sprite_1
 from Build_Button_Sprite_1 import Build_Button_Sprite_1
-from Player1_Sprite import Player1_Sprite
-from Player2_Sprite import Player2_Sprite
 from ctypes import *
 from ctypes.wintypes import *
+from Character_Sprite_Main import *
 from Character1 import Character1_Sprite
 from Character2 import Character2_Sprite
 from CPU_Character1 import CPU_Character1_Sprite
 
 def WM_CREATE(cs,hwnd,map_all):##USE CLASS VARIABLES
+    print("loading all variables")
     file_path_main="C:\\Users\\fredstile\\Documents\\GitHub\\openGL\\images\\"
     ###################
     ##IMPORT PICTURES##
@@ -53,9 +53,10 @@ def WM_CREATE(cs,hwnd,map_all):##USE CLASS VARIABLES
     tree_token_file="Tree_token.bmp"
     axe_token_file="Axe_token_2.bmp"
     empty_hand_token_file="Empty_hand_token.bmp"
-    cs.dict_token_files={"red_button":red_button_file,"purple_button":purple_button_file,"tree_token":tree_token_file,"axe_token":axe_token_file,"empty_hand_token":empty_hand_token_file}
+    stamina_file="Stamina_meter_1a.bmp"
+    cs.dict_token_files={"red_button":red_button_file,"purple_button":purple_button_file,"tree_token":tree_token_file,"axe_token":axe_token_file,"empty_hand_token":empty_hand_token_file,"stamina_meter":stamina_file}
     #Load button and token files, assign pointers, and store pointers in dictionary
-    for i in range(5):
+    for i in range(6):
         file=cs.dict_token_index[i]
         hbmp=cs.dict_token_index[i]
         hdc=cs.dict_token_index[i]
@@ -139,6 +140,9 @@ def WM_CREATE(cs,hwnd,map_all):##USE CLASS VARIABLES
     cs.variables.Object_Rgn.Region_wall[0]=wf.CreatePolygonRgn(Points,len(Points),wf.WINDING)
     Points=wf.REGION(35)
     cs.variables.Object_Rgn.Region_wall[1]=wf.CreatePolygonRgn(Points,len(Points),wf.WINDING)
+    ##Stanima Region
+    Points=wf.REGION(36)
+    cs.variables.Region_token[3]=wf.CreatePolygonRgn(Points,len(Points),wf.WINDING)
 
     ##################################
     ##INITIALIZE REMAINING VARIABLES##
@@ -178,8 +182,14 @@ def WM_CREATE(cs,hwnd,map_all):##USE CLASS VARIABLES
     cs.variables.Player2_window.windowLR.x=wf.shiftx+wf.character_width+100
     cs.variables.Player2_window.windowLR.y=wf.shifty+wf.character_height+100
     ##INITIALIZE SELECTION BOXES##
-    windll.user32.SetRect(pointer(cs.variables.rcStats[0]),0,0,wf.button_w+30, wf.button_h+18)   #For tree resource counter
+    windll.user32.SetRect(pointer(cs.variables.rcStats[0]),0,0,30,18)   #For tree resource counter
     wf.ShiftRect(cs.variables.rcStats[0],wf.token_w*2,int(wf.token_h/3))
+    windll.user32.SetRect(pointer(cs.variables.rcStats[1]),0,0,10,100)   #For Stamina Bar for player 1
+    wf.ShiftRect(cs.variables.rcStats[1],int(wf.token_w/2),int(wf.token_h*5))
+    windll.user32.SetRect(pointer(cs.variables.rcStats[2]),0,0,10,100)   #For Stamina Bar for player 2
+    wf.ShiftRect(cs.variables.rcStats[2],wf.stats_block_w-int(wf.token_w/2),int(wf.token_h*5))
+    cs.variables.Fill_color=windll.gdi32.CreateSolidBrush(wf.RGB(150,0,0))
+    cs.variables.Fill_color2=windll.gdi32.CreateSolidBrush(wf.RGB(0,0,0))
     #For Tools
     ##player1
     windll.user32.SetRect(pointer(cs.variables.Tool_Sel.rcSelect_player1[0]),10,10*wf.token_h,wf.token_w+10+1,10*wf.token_h+wf.token_h+1)
@@ -198,29 +208,7 @@ def WM_CREATE(cs,hwnd,map_all):##USE CLASS VARIABLES
     cs.variables.Tool_Sel.Player2_prev_selection=0
     cs.variables.Player1_chop=False
     cs.variables.Player1_button=False
-    cs.variables.Player2_button=False
-    ##CREATE TARGET BOXES##
-    ##Facing right
-    cs.variables.Wall_target_boxes[0].WallUL=POINT(0,0)
-    cs.variables.Wall_target_boxes[0].WallUR=POINT(wf.wall_vertical_w,0)
-    cs.variables.Wall_target_boxes[0].WallLL=POINT(0,wf.tile_h)
-    cs.variables.Wall_target_boxes[0].WallLL=POINT(wf.wall_vertical_w,wf.tile_h)
-    ##Facing left
-    cs.variables.Wall_target_boxes[1].WallUL=POINT(wf.tile_w-wf.wall_vertical_w,0)
-    cs.variables.Wall_target_boxes[1].WallUR=POINT(wf.tile_w,0)
-    cs.variables.Wall_target_boxes[1].WallLL=POINT(wf.tile_w-wf.wall_vertical_w,wf.tile_h)
-    cs.variables.Wall_target_boxes[1].WallLL=POINT(wf.tile_w,wf.tile_h)
-    ##Facing up
-    cs.variables.Wall_target_boxes[2].WallUL=POINT(0,wf.tile_h-int(wf.wall_horizontal_h/4))
-    cs.variables.Wall_target_boxes[2].WallUR=POINT(wf.tile_w,wf.tile_h-int(wf.wall_horizontal_h/4))
-    cs.variables.Wall_target_boxes[2].WallLL=POINT(0,wf.tile_h)
-    cs.variables.Wall_target_boxes[2].WallLL=POINT(wf.tile_w,wf.tile_h)
-    ##Facing down
-    cs.variables.Wall_target_boxes[3].WallUL=POINT(0,0)
-    cs.variables.Wall_target_boxes[3].WallUR=POINT(wf.tile_w,0)
-    cs.variables.Wall_target_boxes[3].WallLL=POINT(0,int(wf.wall_horizontal_h/4))
-    cs.variables.Wall_target_boxes[3].WallLL=POINT(wf.tile_w,int(wf.wall_horizontal_h/4))
-    
+    cs.variables.Player2_button=False    
     return
     
 ##

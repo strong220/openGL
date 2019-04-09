@@ -2086,6 +2086,13 @@ def Character_Regions(i):
                      (199,2),
                      (199,104),
                      (0,104)]
+
+    Stamina_Meter=[(5,0),(9,0),(10,1),(11,1),(13,3),(14,6),(14,58),(12,58),
+                    (12,14),(11,13),(11,12),(9,10),(5,10),(3,12),(3,13),(2,14),
+                    (2,58),(14,58),(14,62),(2,62),(2,105),(3,106),(3,107),(5,109),(9,109),
+                    (11,107),(11,106),(12,105),(12,62),(14,62),(14,114),(13,115),
+                    (13,116),(11,118),(10,118),(9,119),(5,119),(4,118),(3,118),(1,116),
+                    (1,115),(0,114),(0,5),(1,4),(1,3),(3,1),(4,1)]
           
     Region={1:Head,2:Neck,3:Torso,4:Skirt,5:Leftarm_down,6:Rightarm_down,
             7:Leftleg_planted,8:Rightleg_planted,9:Head_right,10:Neck_right,
@@ -2094,7 +2101,7 @@ def Character_Regions(i):
             21:Torso_back,22:Skirt_back,23:Leftarm_down_back,24:Rightarm_down_back,
             25:Leftleg_planted_back,26:Rightleg_planted_back,27:Hair,28:Hair_back,
             29:Hair_right,30:Hair_left,31:Tree1,32:Tree_token,33:Axe_token,
-            34:Wall_vertical,35:Wall_horizontal}
+            34:Wall_vertical,35:Wall_horizontal,36:Stamina_Meter}
     return Region[i]
 
 ##temp=Character_Regions(1)

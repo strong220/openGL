@@ -11,9 +11,10 @@ def UPDATE_STATSBLOCK(cs):
     ##If the tree token has already been added simply update the number
     if cs.variables.tree_token==True:
         ##Draw Rectangle to white out previous numbers
+##        windll.user32.FillRect(self.vwin.hdc,pointer(self.vwin.rcMessage_box),self.vwin.hbrBkgnd)
         windll.gdi32.Rectangle(cs.dict_background_hdc["stats_block"],cs.variables.rcStats[0].left-1,cs.variables.rcStats[0].top-1,
-                               cs.variables.rcStats[0].left,
-                               cs.variables.rcStats[0].top)
+                               cs.variables.rcStats[0].right,
+                               cs.variables.rcStats[0].bottom)
         ##Type in the new number
         windll.user32.DrawTextW(cs.dict_background_hdc["stats_block"],c_wchar_p(str(cs.variables.Num_trees_cut)),-1,pointer(cs.variables.rcStats[0]),0)
 
@@ -40,11 +41,46 @@ def UPDATE_STATSBLOCK(cs):
         ##DISPLAY NUMBER
         ##Draw Rectangle for numbers to be placed on top of
         windll.gdi32.Rectangle(cs.dict_background_hdc["stats_block"],cs.variables.rcStats[0].left-1,cs.variables.rcStats[0].top-1,
-                               cs.variables.rcStats[0].left,
-                               cs.variables.rcStats[0].top)
+                               cs.variables.rcStats[0].right,
+                               cs.variables.rcStats[0].bottom)
         ##Type in the first number
         windll.user32.DrawTextW(cs.dict_background_hdc["stats_block"],c_wchar_p(str(cs.variables.Num_trees_cut)),-1,pointer(cs.variables.rcStats[0]),0)
-
+    #######################
+    ##UPDATE STAMINA BARS##
+    #######################
+    ##Clear Stamina Bars
+    windll.user32.FillRect(cs.dict_background_hdc["stats_block"],pointer(cs.variables.rcStats[1]),cs.variables.Fill_color2)
+    windll.user32.FillRect(cs.dict_background_hdc["stats_block"],pointer(cs.variables.rcStats[2]),cs.variables.Fill_color2)
+    ##DRAW RECTANGLES FOR STAMINA BARS##
+    temp1=RECT()
+    windll.user32.SetRect(pointer(temp1),cs.variables.rcStats[1].left,cs.variables.rcStats[1].bottom-cs.Player1.Stamina,cs.variables.rcStats[1].right,cs.variables.rcStats[1].bottom)
+    windll.user32.FillRect(cs.dict_background_hdc["stats_block"],pointer(temp1),cs.variables.Fill_color)
+    windll.user32.SetRect(pointer(temp1),cs.variables.rcStats[2].left,cs.variables.rcStats[2].bottom-cs.Player2.Stamina,cs.variables.rcStats[2].right,cs.variables.rcStats[2].bottom)
+    windll.user32.FillRect(cs.dict_background_hdc["stats_block"],pointer(temp1),cs.variables.Fill_color)
+    ##Overlap the meter boarder##
+    ##For Player1
+    position=POINT(cs.variables.rcStats[1].left-2,cs.variables.rcStats[1].top-10)                         ##Top left corner of meter
+    windll.gdi32.OffsetRgn(cs.variables.Region_token[3],position)                                         ##Shift the region to draw meter
+    windll.gdi32.SelectClipRgn(cs.dict_background_hdc["stats_block"],cs.variables.Region_token[3])        ##Clip the region to draw the meter
+    windll.gdi32.BitBlt(cs.dict_background_hdc["stats_block"],position,                                   ##Draw the meter
+                        cs.variables.rcStats[1].right-cs.variables.rcStats[1].left+5,
+                        cs.variables.rcStats[1].bottom-cs.variables.rcStats[1].top+20,
+                        cs.dict_token_hdc["stamina_meter"],
+                        0,0,wf.SRCCOPY)
+    windll.gdi32.OffsetRgn(cs.variables.Region_token[3],-position.x,-position.y)                                   ##Shift the region back
+    windll.gdi32.SelectClipRgn(cs.dict_background_hdc["stats_block"],None)                                #Remove the region
+    ##For Player2
+    position=POINT(cs.variables.rcStats[2].left-2,cs.variables.rcStats[2].top-10)                         ##Top left corner of meter
+    windll.gdi32.OffsetRgn(cs.variables.Region_token[3],position)                                         ##Shift the region to draw meter
+    windll.gdi32.SelectClipRgn(cs.dict_background_hdc["stats_block"],cs.variables.Region_token[3])        ##Clip the region to draw the meter
+    windll.gdi32.BitBlt(cs.dict_background_hdc["stats_block"],position,                                   ##Draw the meter
+                        cs.variables.rcStats[2].right-cs.variables.rcStats[2].left+5,
+                        cs.variables.rcStats[2].bottom-cs.variables.rcStats[2].top+20,
+                        cs.dict_token_hdc["stamina_meter"],
+                        0,0,wf.SRCCOPY)
+    windll.gdi32.OffsetRgn(cs.variables.Region_token[3],-position.x,-position.y)                                   ##Shift the region back
+    windll.gdi32.SelectClipRgn(cs.dict_background_hdc["stats_block"],None)                                #Remove the region
+    
     #########################
     ##UPDATE SELECTED TOOLS##
     #########################

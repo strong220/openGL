@@ -1,9 +1,8 @@
 ##THIS CLASS IS FOR INHERATENCE OF MAIN CHARACTER FUNCTIONS##
 ##THIS CLASS CONTAINS INFORMATION FOR PLAYER 1 CHARACTER##
 import window_functions as wf
-import window_structures as ws
 import math
-import wm_create                 ##This allows us to get all the types
+from random import random
 from ctypes import *
 from ctypes.wintypes import *
 
@@ -50,6 +49,9 @@ class Character_Sprite_Main(object):
         self.Stamina=100
         self.out_of_bounds=False
 
+        ##DEFINE DICTIONARY FOR DAMAGE##
+        self.Damage={"A":10,"C":20,"D":30}
+
     def Reference_Tile(self):
         #Reference Tile#
         return self.tile_position
@@ -67,15 +69,53 @@ class Character_Sprite_Main(object):
         else:
             self.step=0
         return
-
+    def Dice_roll(self,number_of_dice):
+        total=0
+        for i in range(number_of_dice):
+            dice=int(random()*6)+1
+            total=dice+total
+        return total
+    
+    def Attack_Phase(self,map_all,target_point):
+        ##If attack is successful change tile to being under attack by player##
+        if self.Dice_roll(2)>4:
+            temp=map_all[target_point.x][target_point.y]
+            map_all[target_point.x][target_point.y]=temp[0:4]+"A"+self.Character[0]+temp[6:]
+            return 1
+        ##If attack is unsuccesful return 0
+        return 0
+    
     def Defense_Phase(self,map_all):
         ##GGOOBPCC##
         point=self.Target_box()[0]
         x=int(point.x/wf.tile_w)
         y=int(point.y/wf.tile_h)
         string=map_all[x][y]
-        if string[4]=="A" and string[5]!=self.Character[0]:
-            self.out_of_bounds=True
+        if string[4]!="B" and string[4]!="-" and string[5]!=self.Character[0]:
+            ##Attempt Defense##
+            if self.Dice_roll(1)<3:
+                ##Remove Stamina##
+                self.Stamina=self.Stamina-self.Damage[string[4]]
+            ##If out of Stamina Player is put out of bounds##
+            if self.Stamina<=0:
+                ##Clear Previous tiles##
+                gridposition=RECT()
+                [UL,UR,LL,LR]=self.Target_box()
+                gridposition.left=int(UL.x/wf.tile_w)
+                gridposition.top=int(UL.y/wf.tile_h)
+                gridposition.right=int(LR.x/wf.tile_w)
+                gridposition.bottom=int(LR.y/wf.tile_h)
+                if map_all[gridposition.left][gridposition.top][6]==self.Character[0]:
+                    map_all[gridposition.left][gridposition.top]=map_all[gridposition.left][gridposition.top][0:6]+"--"
+                if map_all[gridposition.left][gridposition.bottom][6]==self.Character[0]:
+                    map_all[gridposition.left][gridposition.bottom]=map_all[gridposition.left][gridposition.bottom][0:6]+"--"
+                if map_all[gridposition.right][gridposition.top][6]==self.Character[0]:
+                    map_all[gridposition.right][gridposition.top]=map_all[gridposition.right][gridposition.top][0:6]+"--"
+                if map_all[gridposition.right][gridposition.bottom][6]==self.Character[0]:
+                    map_all[gridposition.right][gridposition.bottom]=map_all[gridposition.right][gridposition.bottom][0:6]+"--"
+                self.out_of_bounds=True
+                return 1
+        return 0
 
     def Update_Position(self,shiftx,shifty,map_all,key_press=False,collision=POINT(0,0)):
         gridposition=RECT()
@@ -171,7 +211,7 @@ class Character_Sprite_Main(object):
                     self.resource["Tree"]=self.resource["Tree"]+5
                 else:
                     ##Attempt attack##
-                    map_all[collision.x][collision.y]=temp[0:4]+"A"+self.Character[0]+temp[6:]
+                    self.Attack_Phase(map_all,collision)
                     
         return self.resource
 
