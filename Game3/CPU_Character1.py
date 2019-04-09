@@ -65,11 +65,13 @@ class CPU_Character1_Sprite(Character3_Sprite):
         second_nodes=[[.1*0,-.1*0,0,0,1,-1,0,0],
                       [0,0,0,0,-1,1,0,0],
                       [0,0,-.1,.1,0,0,1,-1],
-                      [0,0,.1,-.1,0,0,-1,1]]
+                      [0,0,.1,-.1,0,0,-1,1],
+                      [0,0,0,0,-1,-1,-1,-1]]
         out=wf.MATMULT(variables2,second_nodes)
         for i in range(4):
             inputs[i]=(int(out[i][0]+.5)>=1)
-        self.Move(inputs,map_all,objects)
+        keypress=(int(out[4][0]+.5)>=1)
+        self.Move(inputs,map_all,objects,keypress)
         return 0
         
 ##[[self.tile_position.y],
