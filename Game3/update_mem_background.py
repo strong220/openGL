@@ -7,8 +7,8 @@ from ctypes.wintypes import *
 
 def UPDATE_MEM_BACKGROUND(player,cs,map_all):       #It takes in the class variables and the player to be updated
     ##TRANSLATOR FOR MAP CODE TO TILE INDEX##
-    tiles={"G1":"grass_block1","G2":"grass_block2","G3":"grass_block3"}
-    tiles_build={"G1":"grass_block1_build","G2":"grass_block2","G3":"grass_block3"}
+    tiles={"G1":"grass_block1","G2":"grass_block2","G3":"grass_block3","D1":"dirt_block1"}
+    tiles_build={"G1":"grass_block1_build","G2":"grass_block2","G3":"grass_block3","D1":"dirt_block1_build"}
     Player_selection={0:cs.variables.Tool_Sel.Player1_selection,1:cs.variables.Tool_Sel.Player2_selection}          ##Define dictionary for selected player tool
     Player_window={0:cs.variables.Player1_window,1:cs.variables.Player2_window}
     Player_window0={0:cs.Player1,1:cs.Player2}
@@ -26,27 +26,27 @@ def UPDATE_MEM_BACKGROUND(player,cs,map_all):       #It takes in the class varia
     temp_tile=POINT(cs.variables.player_window_ULtile[player].x,cs.variables.player_window_ULtile[player].y)
     cs.variables.player_window_ULtile[player]=POINT(shiftx,shifty)
     ##Decide whether an update is needed, is there an empty column or is a refresh requested
-    if (abs(temp_tile.x-cs.variables.player_window_ULtile[player].x)>=1 or abs(temp_tile.y-cs.variables.player_window_ULtile[player].y)>=1) or cs.variables.player_window[player]==False:
-        for i in range(int(wf.backgrnd_window_w/wf.tile_w)):
-            for j in range(int(wf.backgrnd_window_h/wf.tile_h)):
-                ##DEFINE CURRENT GRID POSITION##
-                grid_position_x=shiftx+i
-                grid_position_y=shifty+j
-                ##DETERMINE TILES AND OBJECTS## GGOOBPCC
-                if grid_position_x<len(map_all) and grid_position_y<len(map_all[0]):
-                    temp=map_all[grid_position_x][grid_position_y]
-                    ##ADD TILE##
-                    position=POINT(i*wf.tile_w,j*wf.tile_h)
-                    if Player_selection[player]==wf.Empty_Hand or map_all[grid_position_x][grid_position_y][6]!="-":
-                        windll.gdi32.BitBlt(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],position,
-                                        wf.tile_w,wf.tile_h,cs.dict_grass_hdc[tiles_build[temp[0:2]]],0,0,wf.SRCCOPY)
-                    else:
-                        windll.gdi32.BitBlt(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],position,
-                                            wf.tile_w,wf.tile_h,cs.dict_grass_hdc[tiles[temp[0:2]]],0,0,wf.SRCCOPY)
+##    if (abs(temp_tile.x-cs.variables.player_window_ULtile[player].x)>=1 or abs(temp_tile.y-cs.variables.player_window_ULtile[player].y)>=1) or cs.variables.player_window[player]==False:
+    for i in range(int(wf.backgrnd_window_w/wf.tile_w)):
+        for j in range(int(wf.backgrnd_window_h/wf.tile_h)):
+            ##DEFINE CURRENT GRID POSITION##
+            grid_position_x=shiftx+i
+            grid_position_y=shifty+j
+            ##DETERMINE TILES AND OBJECTS## GGOOBPCC
+            if grid_position_x<len(map_all) and grid_position_y<len(map_all[0]):
+                temp=map_all[grid_position_x][grid_position_y]
+                ##ADD TILE##
+                position=POINT(i*wf.tile_w,j*wf.tile_h)
+                if Player_selection[player]==wf.Empty_Hand or map_all[grid_position_x][grid_position_y][6]!="-":
+                    windll.gdi32.BitBlt(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],position,
+                                    wf.tile_w,wf.tile_h,cs.dict_grass_hdc[tiles_build[temp[0:2]]],0,0,wf.SRCCOPY)
+                else:
+                    windll.gdi32.BitBlt(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],position,
+                                        wf.tile_w,wf.tile_h,cs.dict_grass_hdc[tiles[temp[0:2]]],0,0,wf.SRCCOPY)
     player1_drawn=False
     player2_drawn=False
-    characters=[cs.Player1,cs.Player2,cs.Player3]
-    characters2=[cs.Player1,cs.Player2,cs.Player3]
+    characters=[cs.Player1,cs.Player2,cs.Player3,cs.Wheat_Barrel,cs.Player4]
+    characters2=[cs.Player1,cs.Player2,cs.Player3,cs.Wheat_Barrel,cs.Player4]
     ##Sort Characters##
     ###################################
     ####---------------------------####
@@ -96,18 +96,19 @@ def UPDATE_MEM_BACKGROUND(player,cs,map_all):       #It takes in the class varia
     ##Initialize counter for sorting list
     count=0
     ##Object in order of layers with respect to upper box position##
-    objectorder={0:cs.Wall1[3],1:cs.Tree1,2:cs.Wall1[0],3:cs.Wall1[1],4:cs.Wall1[2],5:cs.Build_Button1}
+    objectorder={0:cs.Wall1[3],1:cs.Tree1,2:cs.Wall1[0],3:cs.Wall1[1],4:cs.Wall1[2],5:cs.Build_Button1,6:cs.Wheat1}
     if (abs(temp_tile.x-cs.variables.player_window_ULtile[player].x)>=1 or abs(temp_tile.y-cs.variables.player_window_ULtile[player].y)>=1) or cs.variables.player_window[player]==False:
         for j in range(int(wf.backgrnd_window_h/wf.tile_h)):
             count=0
             player1_drawn=False
             player2_drawn=False
-            drawn=[False,False,False]
+            drawn=[False,False,False,False,False]
             grid_position_y=shifty+j
             ##Objects in order of layers with respective upper box position##
             upperbound={0:cs.Wall1[3].Target_box(0,grid_position_y*wf.tile_h,3)[3].y,1:cs.Tree1.Target_box(0,grid_position_y*wf.tile_h)[3].y,
                         2:cs.Wall1[0].Target_box(0,grid_position_y*wf.tile_h,0)[3].y,3:cs.Wall1[1].Target_box(0,grid_position_y*wf.tile_h,1)[3].y,
-                        4:cs.Wall1[2].Target_box(0,grid_position_y*wf.tile_h,2)[3].y}
+                        4:cs.Wall1[2].Target_box(0,grid_position_y*wf.tile_h,2)[3].y,5:cs.Build_Button1.Target_box(0,grid_position_y*wf.tile_h)[3].y,
+                        6:cs.Wheat1.Target_box(0,grid_position_y*wf.tile_h)[3].y}
             for k in objectorder:
                 for i in range(int(wf.backgrnd_window_w/wf.tile_w)):
                     ##DEFINE CURRENT GRID POSITION##
@@ -119,8 +120,13 @@ def UPDATE_MEM_BACKGROUND(player,cs,map_all):       #It takes in the class varia
                 ##Draw Characters in order of the sorted list##
                 while count<len(characters2):
                     if characters2[count].Target_box()[3].y>upperbound[k] and drawn[count]==False:
-                        characters2[count].Draw_Character(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],
-                                                          cs.variables.player_window_ULtile[player])
+                        if characters2[count].Character!="W":
+                            characters2[count].Draw_Character(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],
+                                                              cs.variables.player_window_ULtile[player])
+                        else:
+                            ##Draw Barrel
+                            characters2[count].Draw(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],
+                                                    temp,cs.variables.player_window_ULtile[player],characters[player])
                         drawn[count]=True
                         count=count+1
                     else:
@@ -129,6 +135,7 @@ def UPDATE_MEM_BACKGROUND(player,cs,map_all):       #It takes in the class varia
 
         else:
             cs.variables.player1_window=True
+##        cs.Wheat_Barrel.Draw(cs.dict_background_hdc["mem_backgrnd"+str(player+1)],temp,cs.variables.player_window_ULtile[player],characters[player])
         ##PLACE BACKGROUND IN PLAYER WINDOW##
         shiftedUL=POINT()
         shiftedUL.x=(Player_window[player].windowUL.x-wf.shiftx)%wf.tile_w                  ##Determines how much the background needs to shift in x in relation to player window

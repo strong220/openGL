@@ -3,6 +3,7 @@ from ctypes import *
 from ctypes.wintypes import *
 from Tree1_Sprite import Tree_Sprite_1
 from Wall_Sprite_1 import Wall_Sprite_1
+from Barrel_Sprite import Barrel_Sprite_1
 from Character_Sprite_Main import Character_Sprite_Main
 
 class XFORM(Structure):
@@ -76,21 +77,25 @@ class Main_variables2(Structure):
               ("S_key_last",c_int),
               ("A_key_last",c_int),
               ("W_key_last",c_int),
+              ("Z_key_last",c_int),
               ("E_key_last",c_int),
               ("Q_key_last",c_int),
               ("Player1_chop",c_bool),
               ("Player1_button",c_bool),
               ("Player2_button",c_bool),
               ("Num_trees_cut",c_int),  #Tracks the number of trees chopped
+              ("Num_wheat_harvested",c_int),  #Tracks the number of wheat harvested
               ("NUM5_key_last",c_int),
               ("NUM6_key_last",c_int),
               ("NUM8_key_last",c_int),
               ("NUM4_key_last",c_int),
               ("NUM9_key_last",c_int),
               ("NUM7_key_last",c_int),
+              ("NUM1_key_last",c_int),
               ("player_window",c_bool*2),
               ("player_window_ULtile",POINT*2),
               ("tree_token",c_bool),
+              ("wheat_token",c_bool),
               ("hpenDot",HPEN),
               ("hpenDot_black",HPEN),
               ("Fill_color",HBRUSH),
@@ -108,6 +113,7 @@ class Variables_and_dictionaries:
         self.Player3=Character_Sprite_Main
         self.Tree1=Tree_Sprite_1
         self.Wall1=[Wall_Sprite_1,Wall_Sprite_1,Wall_Sprite_1,Wall_Sprite_1]
+        self.Wheat_Barrel=Barrel_Sprite_1
         ##Character dictionaries##
         self.dict_character_files={"character1_down":None,"character1_up":None,"character1_right":None,"character1_left":None,
                                    "character2_down":None,"character2_up":None,"character2_right":None,"character2_left":None}
@@ -120,15 +126,15 @@ class Variables_and_dictionaries:
         self.dict_character_hdc={"character1_down":None,"character1_up":None,"character1_right":None,"character1_left":None,
                                    "character2_down":None,"character2_up":None,"character2_right":None,"character2_left":None}
         ##Grass block dictionaries##
-        self.dict_grass_files={"grass_block1":None,"grass_block2":None,"grass_block3":None,"grass_block1_build":None}
-        self.dict_grass_hbmp={"grass_block1":None,"grass_block2":None,"grass_block3":None,"grass_block1_build":None}
-        self.dict_grass_index={0:"grass_block1",1:"grass_block2",2:"grass_block3",3:"grass_block1_build"}
-        self.dict_grass_hdc={"grass_block1":None,"grass_block2":None,"grass_block3":None,"grass_block1_build":None}
+        self.dict_grass_files={"grass_block1":None,"grass_block2":None,"grass_block3":None,"grass_block1_build":None,"dirt_block1":None,"dirt_block1_build":None}
+        self.dict_grass_hbmp={"grass_block1":None,"grass_block2":None,"grass_block3":None,"grass_block1_build":None,"dirt_block1":None,"dirt_block1_build":None}
+        self.dict_grass_index={0:"grass_block1",1:"grass_block2",2:"grass_block3",3:"grass_block1_build",4:"dirt_block1",5:"dirt_block1_build"}
+        self.dict_grass_hdc={"grass_block1":None,"grass_block2":None,"grass_block3":None,"grass_block1_build":None,"dirt_block1":None,"dirt_block1_build":None}
         ##Button and token dictionaries##
-        self.dict_token_files={"red_button":None,"purple_button":None,"tree_token":None,"axe_token":None,"empty_hand_token":None,"stamina_meter":None}
-        self.dict_token_hbmp={"red_button":None,"purple_button":None,"tree_token":None,"axe_token":None,"empty_hand_token":None,"stamina_meter":None}
-        self.dict_token_index={0:"red_button",1:"purple_button",2:"tree_token",3:"axe_token",4:"empty_hand_token",5:"stamina_meter"}
-        self.dict_token_hdc={"red_button":None,"purple_button":None,"tree_token":None,"axe_token":None,"empty_hand_token":None,"stamina_meter":None}
+        self.dict_token_files={"red_button":None,"purple_button":None,"tree_token":None,"axe_token":None,"empty_hand_token":None,"stamina_meter":None,"wheat_token":None}
+        self.dict_token_hbmp={"red_button":None,"purple_button":None,"tree_token":None,"axe_token":None,"empty_hand_token":None,"stamina_meter":None,"wheat_token":None}
+        self.dict_token_index={0:"red_button",1:"purple_button",2:"tree_token",3:"axe_token",4:"empty_hand_token",5:"stamina_meter",6:"wheat_token"}
+        self.dict_token_hdc={"red_button":None,"purple_button":None,"tree_token":None,"axe_token":None,"empty_hand_token":None,"stamina_meter":None,"wheat_token":None}
         ##Background dictionaries##
         self.dict_background_files={"total_background":None,"mem_backgrnd1":None,"mem_backgrnd2":None,"mem_main1":None,
                               "mem_main2":None,"mem_main_show":None,"stats_block":None}

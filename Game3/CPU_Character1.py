@@ -8,9 +8,9 @@ def digitize(string,name):
     out=0
     if len(string)>0:
         out=0
-        if string[2]!="-":
+        if string[2]!="-":# or (string[6]!=name[0] and string[6]!="-" and (string[6]!="0" or string[6]!="1")):
             out=out+1
-        if string[6]!="-" and string[6]!=name[0]:
+        if string[6]!="-" and (string[6]=="0" or string[6]=="1"):
             out=out-1
     return out
 class CPU_Character1_Sprite(Character3_Sprite):
@@ -21,7 +21,7 @@ class CPU_Character1_Sprite(Character3_Sprite):
         self.position.y=2000
     def Auto_Move(self,map_all,objects):
         ##DOWN,UP,LEFT,RIGHT##
-        inputs=[False,False,False,False]
+        inputs=[False,False,False,False,False]
 ##        print(self.tile_position.x-2,self.tile_position.y-1)
 ##        print(map_all[self.tile_position.x-1])
         variables=[[self.tile_position.y],

@@ -12,6 +12,9 @@ class Character_Sprite_Main(object):
         self.Character=None
         self.Step=0
         self.Tool_selection=None
+        self.build_object=1
+        self.build_step=0
+        self.build_objects={0:"Wall",1:"Wheat"}
         ##Save hwnd##
         self.HWND=hwnd
         ##Define dictionaries for the character##
@@ -43,7 +46,7 @@ class Character_Sprite_Main(object):
         self.button_position=POINT(0,0)
 
         ##DEFINE RESOURCE DICTIONARY##
-        self.resource={"Tree":0}
+        self.resource={"Tree":0,"Wheat":0}
 
         ##STAMINA AND OUT OF BOUNDS##
         self.Stamina=100
@@ -56,6 +59,10 @@ class Character_Sprite_Main(object):
         #Reference Tile#
         return self.tile_position
 
+    def Change_build_object(self):
+        self.build_step=(self.build_step+.05)%2
+        self.build_object=int(self.build_step)
+        
     def Update_direction(self,new_direction):
         if self.direction!=new_direction:
             self.step=0
@@ -117,7 +124,7 @@ class Character_Sprite_Main(object):
                 return 1
         return 0
 
-    def Update_Position(self,shiftx,shifty,map_all,key_press=False,collision=POINT(0,0)):
+    def Update_Position(self,shiftx,shifty,map_all,key_press=False,collision=POINT(-1,-1)):
         gridposition=RECT()
         [UL,UR,LL,LR]=self.Target_box()
         gridposition.left=int(UL.x/wf.tile_w)
@@ -184,14 +191,19 @@ class Character_Sprite_Main(object):
                 self.button_position=POINT(checktiles[self.direction][0],checktiles[self.direction][1])
             if temp[4:6]=="B"+self.Character[0] and temp[2]!=0:
                 ##Put in build request if key is pressed
-                if key_press==True and self.resource["Tree"]>=1:
-                    ##Define dictionary for marking walls##
-                    wall_direction={"right":"0","left":"1","up":"2","down":"3"}
-                    ##Record wall placement##
-                    map_all[checktiles[self.direction][0]][checktiles[self.direction][1]]=temp[0:2]+"W"+wall_direction[self.direction]+"--"+temp[6:]
-                    self.resource["Tree"]=self.resource["Tree"]-1
+                if key_press==True:
+                    if self.build_objects[self.build_object]=="Wall" and self.resource["Tree"]>=1:
+                        ##Define dictionary for marking walls##
+                        wall_direction={"right":"0","left":"1","up":"2","down":"3"}
+                        ##Record wall placement##
+                        map_all[checktiles[self.direction][0]][checktiles[self.direction][1]]=temp[0:2]+"W"+wall_direction[self.direction]+"--"+temp[6:]
+                        self.resource["Tree"]=self.resource["Tree"]-1
+                    elif self.build_objects[self.build_object]=="Wheat" and self.resource["Wheat"]>=1 and temp[0:2]=="D1":
+                        ##Record wall placement##
+                        map_all[checktiles[self.direction][0]][checktiles[self.direction][1]]=temp[0:2]+"F-"+"--"+temp[6:]
+                        self.resource["Wheat"]=self.resource["Wheat"]-1
         ##Selection of Adjacent objects##
-        else:
+        elif collision.x!=-1:
             temp=map_all[collision.x][collision.y]
             if temp[5]=="-" and (temp[2]!="-" or temp[6]!="-"):
                 ##Update Map to show there is a button##
@@ -209,6 +221,10 @@ class Character_Sprite_Main(object):
                     ##Cut down wall##
                     map_all[collision.x][collision.y]=temp[0:2]+"----"+temp[6:]
                     self.resource["Tree"]=self.resource["Tree"]+5
+                elif temp[2]=="F":
+                    ##Harvest Crops##
+                    map_all[collision.x][collision.y]=temp[0:2]+"----"+temp[6:]
+                    self.resource["Wheat"]=self.resource["Wheat"]+5
                 else:
                     ##Attempt attack##
                     self.Attack_Phase(map_all,collision)
@@ -219,8 +235,12 @@ class Character_Sprite_Main(object):
         if self.out_of_bounds==True:
             return self.resource
         self.Defense_Phase(map_all)
-        [down,up,left,right]=inputs
+        [down,up,left,right,change_build_object]=inputs
         [dy,dx]=[0,0]
+        ##Update build object##
+        if change_build_object:
+            self.Change_build_object()
+
         ##Update Direction##
         temp_direction=self.direction
         if down:
@@ -259,7 +279,7 @@ class Character_Sprite_Main(object):
         rcCollisionULt,rcCollisionURt,rcCollisionLLt,rcCollisionLRt=POINT(),POINT(),POINT(),POINT()
         ##LOOK AT TILES COVERED BY PLAYER CHARACTER AND ALL ADJACENT TILES##
         check_temp=True
-        collision_point=POINT(0,0)#POINT(self.tile_position.x,self.tile_position.y)
+        collision_point=POINT(-1,-1)#POINT(self.tile_position.x,self.tile_position.y)
         for i in range(gridposition.left,gridposition.right+1):
             for j in range(gridposition.top-1,gridposition.bottom+1):
                 if j>=0:
@@ -267,6 +287,8 @@ class Character_Sprite_Main(object):
                 ##map strings are GGOOBPCC check for objects                        
                     for k in range(len(objects)):
                         collision=False
+                        check_y_temp=check_y
+                        check_x_temp=check_x
 ##                        if map_all[i][j][2]==objects[k][1] or map_all[i][j][6:8]==objects[k][1] and objects[k][1]!=self.Character:
                         if map_all[i][j][2]==objects[k][1] or (map_all[i][j][6:8]!="--"  and objects[k][1][0]=="P") and objects[k][1][1:]!=self.Character:
                             if map_all[i][j][3]!="-":
@@ -300,29 +322,32 @@ class Character_Sprite_Main(object):
                                     collision=True
 
                             ##Check for intersection of the left and right side of the collision box and the top side of player
-                            if check_temp==True:
-                                if wf.check_intersection2(rcCollisionULt,rcCollisionLLt,rcCollisionURt,rcCollisionLRt,ULt,URt):
-                                    if wf.check_intersection2(rcCollisionULt,rcCollisionLLt,rcCollisionURt,rcCollisionLRt,
-                                                              POINT(ULt.x,UL.y),POINT(URt.x,UR.y)):
-                                        check_x=False
-                                        collision=True
-                                    elif wf.check_intersection2(rcCollisionULt,rcCollisionLLt,rcCollisionURt,rcCollisionLRt,
-                                                                POINT(UL.x,ULt.y),POINT(UR.x,URt.y)):
-                                        check_y=False
-                                        collision=True
-                                ##Check for intersection of the left and right side of the collision box and the bottom side of player
-                                elif wf.check_intersection2(rcCollisionULt,rcCollisionLLt,rcCollisionURt,rcCollisionLRt,LLt,LRt):
-                                    if wf.check_intersection2(rcCollisionULt,rcCollisionLLt,rcCollisionURt,rcCollisionLRt,
-                                                              POINT(LLt.x,LL.y),POINT(LRt.x,LR.y)):
-                                        check_x=False
-                                        collision=True
-                                    elif wf.check_intersection2(rcCollisionULt,rcCollisionLLt,rcCollisionURt,rcCollisionLRt,
-                                                                POINT(LL.x,LLt.y),POINT(LR.x,LRt.y)):
-                                        check_y=False
-                                        collision=True
+##                            if check_temp==True or check_temp==False:
+                            if wf.check_intersection2(rcCollisionULt,rcCollisionLLt,rcCollisionURt,rcCollisionLRt,ULt,URt):
+                                if wf.check_intersection2(rcCollisionULt,rcCollisionLLt,rcCollisionURt,rcCollisionLRt,
+                                                          POINT(ULt.x,UL.y),POINT(URt.x,UR.y)):
+                                    check_x=False
+                                    collision=True
+                                elif wf.check_intersection2(rcCollisionULt,rcCollisionLLt,rcCollisionURt,rcCollisionLRt,
+                                                            POINT(UL.x,ULt.y),POINT(UR.x,URt.y)):
+                                    check_y=False
+                                    collision=True
+                            ##Check for intersection of the left and right side of the collision box and the bottom side of player
+                            elif wf.check_intersection2(rcCollisionULt,rcCollisionLLt,rcCollisionURt,rcCollisionLRt,LLt,LRt):
+                                if wf.check_intersection2(rcCollisionULt,rcCollisionLLt,rcCollisionURt,rcCollisionLRt,
+                                                          POINT(LLt.x,LL.y),POINT(LRt.x,LR.y)):
+                                    check_x=False
+                                    collision=True
+                                elif wf.check_intersection2(rcCollisionULt,rcCollisionLLt,rcCollisionURt,rcCollisionLRt,
+                                                            POINT(LL.x,LLt.y),POINT(LR.x,LRt.y)):
+                                    check_y=False
+                                    collision=True
                             if collision==True:
                                 collision_point.x=int(rcCollisionULt.x/wf.tile_w)
                                 collision_point.y=int(rcCollisionULt.y/wf.tile_h)
+                                if objects[k][1]=="F":
+                                    check_y=check_y_temp
+                                    check_x=check_x_temp
 
 
         ##########################

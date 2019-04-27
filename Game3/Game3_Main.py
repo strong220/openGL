@@ -131,13 +131,17 @@ def main():
                 return
             windll.user32.TranslateMessage(lpmsg)
             windll.user32.DispatchMessageA(lpmsg)
-        current_time=time.process_time()
-        time.sleep(current_time%.01)
+##        current_time=time.process_time()
+##        time.sleep(current_time%(1/60))
 ##        input("pause")
 ####        prcurrent_time)
 ##        if current_time>start_time+.01:
 ##            start_time=time.process_time()
-        Game_main.ANIMATE()
+        temp=(1/80)-Game_main.ANIMATE()             ##Determine goal refresh rate##
+        if temp>0:
+            time.sleep(temp)
+##        if temp>.16:
+##            print(temp)
 ##        print(msg.message)
             #UPDATE FRAMES#
 ##        else:

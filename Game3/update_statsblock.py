@@ -11,7 +11,6 @@ def UPDATE_STATSBLOCK(cs):
     ##If the tree token has already been added simply update the number
     if cs.variables.tree_token==True:
         ##Draw Rectangle to white out previous numbers
-##        windll.user32.FillRect(self.vwin.hdc,pointer(self.vwin.rcMessage_box),self.vwin.hbrBkgnd)
         windll.gdi32.Rectangle(cs.dict_background_hdc["stats_block"],cs.variables.rcStats[0].left-1,cs.variables.rcStats[0].top-1,
                                cs.variables.rcStats[0].right,
                                cs.variables.rcStats[0].bottom)
@@ -45,6 +44,43 @@ def UPDATE_STATSBLOCK(cs):
                                cs.variables.rcStats[0].bottom)
         ##Type in the first number
         windll.user32.DrawTextW(cs.dict_background_hdc["stats_block"],c_wchar_p(str(cs.variables.Num_trees_cut)),-1,pointer(cs.variables.rcStats[0]),0)
+
+    ##If wheat token has already been drawn update number##
+    if cs.variables.wheat_token==True:
+        ##Draw Rectangle to white out previous numbers
+        windll.gdi32.Rectangle(cs.dict_background_hdc["stats_block"],cs.variables.rcStats[3].left-1,cs.variables.rcStats[3].top-1,
+                               cs.variables.rcStats[3].right,
+                               cs.variables.rcStats[3].bottom)
+        ##Type in the new number
+        windll.user32.DrawTextW(cs.dict_background_hdc["stats_block"],c_wchar_p(str(cs.variables.Num_wheat_harvested)),-1,pointer(cs.variables.rcStats[3]),0)
+
+
+    elif cs.variables.Num_wheat_harvested>=1 and cs.variables.wheat_token==False:
+        ##Update the tree token to being placed
+        cs.variables.wheat_token=True
+        
+        ##LEFT TOKEN
+        windll.gdi32.SelectClipRgn(cs.dict_background_hdc["stats_block"],cs.variables.Region_token[4])                      ##Create clipping region to outline the token
+        windll.gdi32.BitBlt(cs.dict_background_hdc["stats_block"],POINT(0,wf.token_h),wf.token_w,wf.token_h,                            ##Add token image to stats block
+                            cs.dict_token_hdc["wheat_token"],0,0,wf.SRCCOPY)
+        windll.gdi32.SelectClipRgn(cs.dict_background_hdc["stats_block"],None)                                              ##Clear the clipping region
+
+        ##RIGHT TOKEN
+        position=POINT(wf.stats_block_w-wf.token_w,0)                                                                       ##Create Point for defining placement of second wheat token
+        windll.gdi32.OffsetRgn(cs.variables.Region_token[4],position)                                                       ##Shift the clipping region
+        windll.gdi32.SelectClipRgn(cs.dict_background_hdc["stats_block"],cs.variables.Region_token[4])                      ##Select the shifted clipping region
+        windll.gdi32.BitBlt(cs.dict_background_hdc["stats_block"],position.x,position.y+wf.token_h,wf.token_w,wf.token_h,                           ##Add token image to stats block
+                            cs.dict_token_hdc["wheat_token"],0,0,wf.SRCCOPY)
+        windll.gdi32.SelectClipRgn(cs.dict_background_hdc["stats_block"],None)                                              ##Clear the clipping region
+        windll.gdi32.OffsetRgn(cs.variables.Region_token[4],-position.x,-position.y)                                        ##Shift the clipping region back to zero
+
+        ##DISPLAY NUMBER
+        ##Draw Rectangle for numbers to be placed on top of
+        windll.gdi32.Rectangle(cs.dict_background_hdc["stats_block"],cs.variables.rcStats[3].left-1,cs.variables.rcStats[3].top-1,
+                               cs.variables.rcStats[3].right,
+                               cs.variables.rcStats[3].bottom)
+        ##Type in the first number
+        windll.user32.DrawTextW(cs.dict_background_hdc["stats_block"],c_wchar_p(str(cs.variables.Num_wheat_harvested)),-1,pointer(cs.variables.rcStats[3]),0)
     #######################
     ##UPDATE STAMINA BARS##
     #######################

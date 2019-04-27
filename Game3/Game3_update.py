@@ -1,6 +1,7 @@
 ##THIS CONTAINS THE CLASS FOR UPDATING THE WINDOW##
 import window_structures as ws
 import window_functions as wf
+import time
 from ctypes import *
 from ctypes.wintypes import *
 import random
@@ -13,7 +14,7 @@ from update_mem_background import UPDATE_MEM_BACKGROUND
 
 class MainWndProc:
     def __init__(self,hwnd,uMsg,wParam,lParam,hInst):
-        self.resource={"Tree":0}
+        self.resource={"Tree":0,"Wheat":0}
         self.hwnd=hwnd
         self.uMsg=uMsg
         self.wParam=wParam
@@ -55,6 +56,7 @@ class MainWndProc:
         wmp(self.vwin,self.hwnd)
         return 0
     def ANIMATE(self):
+        start=time.process_time()
         self.step=self.step+1
         self.Move()
         self.Update_Statsblock()
@@ -76,8 +78,9 @@ class MainWndProc:
             x=int(random.random()*wf.map_w/200)
             y=int(random.random()*wf.map_h/200)
             self.map_all[x][y]="G1T-----"
+        end=time.process_time()
 
-        return 0
+        return (end-start)
         
     def WM_SIZE(self):
         wms(self.vwin,self.hwnd)
@@ -95,56 +98,65 @@ class MainWndProc:
     def WM_KEY_DOWN(self):
         if self.wParam==wf.S_KEY:
             self.vwin.variables.S_key_last=wf.S_KEY
-        elif self.wParam==wf.A_KEY:
+        if self.wParam==wf.A_KEY:
             self.vwin.variables.A_key_last=wf.A_KEY
-        elif self.wParam==wf.D_KEY:
+        if self.wParam==wf.D_KEY:
             self.vwin.variables.D_key_last=wf.D_KEY
-        elif self.wParam==wf.W_KEY:
+        if self.wParam==wf.W_KEY:
             self.vwin.variables.W_key_last=wf.W_KEY
-        elif self.wParam==wf.E_KEY:
+        if self.wParam==wf.Z_KEY:
+            self.vwin.variables.Z_key_last=wf.Z_KEY
+        if self.wParam==wf.E_KEY:
             self.vwin.variables.E_key_last=wf.E_KEY
-        elif self.wParam==wf.Q_KEY:
+        if self.wParam==wf.Q_KEY:
             self.vwin.variables.Q_key_last=wf.Q_KEY
-        elif self.wParam==wf.NUM5_KEY:
+        if self.wParam==wf.NUM5_KEY:
             self.vwin.variables.NUM5_key_last=wf.NUM5_KEY
-        elif self.wParam==wf.NUM6_KEY:
+        if self.wParam==wf.NUM6_KEY:
             self.vwin.variables.NUM6_key_last=wf.NUM6_KEY
-        elif self.wParam==wf.NUM8_KEY:
+        if self.wParam==wf.NUM8_KEY:
             self.vwin.variables.NUM8_key_last=wf.NUM8_KEY
-        elif self.wParam==wf.NUM4_KEY:
+        if self.wParam==wf.NUM4_KEY:
             self.vwin.variables.NUM4_key_last=wf.NUM4_KEY
-        elif self.wParam==wf.NUM9_KEY:
+        if self.wParam==wf.NUM9_KEY:
             self.vwin.variables.NUM9_key_last=wf.NUM9_KEY
-        elif self.wParam==wf.NUM7_KEY:
+        if self.wParam==wf.NUM7_KEY:
             self.vwin.variables.NUM7_key_last=wf.NUM7_KEY
+        if self.wParam==wf.NUM1_KEY:
+            self.vwin.variables.NUM1_key_last=wf.NUM1_KEY
         return 0
     def WM_KEY_UP(self):
 ##        self.vwin.Player1.Animate_step(False)
 ##        self.vwin.Player2.Animate_step(False)
+        
         if self.wParam==wf.S_KEY:
             self.vwin.variables.S_key_last=wf.S_KEY
-        elif self.wParam==wf.A_KEY:
+        if self.wParam==wf.A_KEY:
             self.vwin.variables.A_key_last=wf.A_KEY
-        elif self.wParam==wf.D_KEY:
+        if self.wParam==wf.D_KEY:
             self.vwin.variables.D_key_last=wf.D_KEY
-        elif self.wParam==wf.W_KEY:
+        if self.wParam==wf.W_KEY:
             self.vwin.variables.W_key_last=wf.W_KEY
-        elif self.wParam==wf.E_KEY:
+        if self.wParam==wf.Z_KEY:
+            self.vwin.variables.Z_key_last=wf.Z_KEY
+        if self.wParam==wf.E_KEY:
             self.vwin.variables.E_key_last=wf.E_KEY
-        elif self.wParam==wf.Q_KEY:
+        if self.wParam==wf.Q_KEY:
             self.vwin.variables.Q_key_last=wf.Q_KEY
-        elif self.wParam==wf.NUM5_KEY:
+        if self.wParam==wf.NUM5_KEY:
             self.vwin.variables.NUM5_key_last=wf.NUM5_KEY
-        elif self.wParam==wf.NUM6_KEY:
+        if self.wParam==wf.NUM6_KEY:
             self.vwin.variables.NUM6_key_last=wf.NUM6_KEY
-        elif self.wParam==wf.NUM8_KEY:
+        if self.wParam==wf.NUM8_KEY:
             self.vwin.variables.NUM8_key_last=wf.NUM8_KEY
-        elif self.wParam==wf.NUM4_KEY:
+        if self.wParam==wf.NUM4_KEY:
             self.vwin.variables.NUM4_key_last=wf.NUM4_KEY
-        elif self.wParam==wf.NUM9_KEY:
+        if self.wParam==wf.NUM9_KEY:
             self.vwin.variables.NUM9_key_last=wf.NUM9_KEY
-        elif self.wParam==wf.NUM7_KEY:
+        if self.wParam==wf.NUM7_KEY:
             self.vwin.variables.NUM7_key_last=wf.NUM7_KEY
+        if self.wParam==wf.NUM1_KEY:
+            self.vwin.variables.NUM1_key_last=wf.NUM1_KEY
         return 0
         
     def WM_KEY_PRESS(self):
@@ -161,6 +173,8 @@ class MainWndProc:
         if self.wParam==wf.W_KEY_DOWN or self.vwin.variables.W_key_last==wf.W_KEY_DOWN:
             self.vwin.variables.W_key_last=wf.W_KEY_DOWN
             self.vwin.variables.player1_direction="up"
+        if self.wParam==wf.Z_KEY_DOWN or self.vwin.variables.Z_key_last==wf.Z_KEY_DOWN:
+            self.vwin.variables.Z_key_last=wf.Z_KEY_DOWN
         if self.wParam==wf.E_KEY_DOWN or self.vwin.variables.E_key_last==wf.E_KEY_DOWN:
             self.vwin.variables.E_key_last=wf.E_KEY_DOWN
         if self.wParam==wf.Q_KEY_DOWN or self.vwin.variables.Q_key_last==wf.Q_KEY_DOWN:
@@ -181,6 +195,8 @@ class MainWndProc:
         if self.wParam==wf.NUM8_KEY_DOWN or self.vwin.variables.NUM8_key_last==wf.NUM8_KEY_DOWN:
             self.vwin.variables.NUM8_key_last=wf.NUM8_KEY_DOWN
             self.vwin.variables.player2_direction="up"
+        if self.wParam==wf.NUM1_KEY_DOWN or self.vwin.variables.NUM1_key_last==wf.NUM1_KEY_DOWN:
+            self.vwin.variables.NUM1_key_last=wf.NUM1_KEY_DOWN
         if self.wParam==wf.NUM9_KEY_DOWN or self.vwin.variables.NUM9_key_last==wf.NUM9_KEY_DOWN:
             self.vwin.variables.NUM9_key_last=wf.NUM9_KEY_DOWN
         if self.wParam==wf.NUM7_KEY_DOWN or self.vwin.variables.NUM7_key_last==wf.NUM7_KEY_DOWN:
@@ -194,24 +210,30 @@ class MainWndProc:
         inputs1=[self.vwin.variables.S_key_last==wf.S_KEY_DOWN,
                  self.vwin.variables.W_key_last==wf.W_KEY_DOWN,
                  self.vwin.variables.A_key_last==wf.A_KEY_DOWN,
-                 self.vwin.variables.D_key_last==wf.D_KEY_DOWN]
-        Player1_keypress=(self.wParam==wf.E_KEY_DOWN)
+                 self.vwin.variables.D_key_last==wf.D_KEY_DOWN,
+                 self.vwin.variables.Z_key_last==wf.Z_KEY_DOWN]
+        Player1_keypress=(self.vwin.variables.E_key_last==wf.E_KEY_DOWN)
         inputs2=[self.vwin.variables.NUM5_key_last==wf.NUM5_KEY_DOWN,
                  self.vwin.variables.NUM8_key_last==wf.NUM8_KEY_DOWN,
                  self.vwin.variables.NUM4_key_last==wf.NUM4_KEY_DOWN,
-                 self.vwin.variables.NUM6_key_last==wf.NUM6_KEY_DOWN]
-        Player2_keypress=(self.wParam==wf.NUM9_KEY_DOWN)
+                 self.vwin.variables.NUM6_key_last==wf.NUM6_KEY_DOWN,
+                 self.vwin.variables.NUM1_key_last==wf.NUM1_KEY_DOWN]
+        Player2_keypress=(self.vwin.variables.NUM9_key_last==wf.NUM9_KEY_DOWN)
         objects=[[self.vwin.Tree1,"T"],
                  [self.vwin.Wall1[0],"W"],
+                 [self.vwin.Wheat1,"F"],
                  [self.vwin.Player1,"P0-"],
                  [self.vwin.Player2,"P1-"],
-                 [self.vwin.Player3,"P2-"]]
+                 [self.vwin.Player3,"P2-"],
+                 [self.vwin.Player4,"P3-"]]
         self.vwin.Player1.resource=self.resource
         self.resource=self.vwin.Player1.Move(inputs1,self.map_all,objects,Player1_keypress)
         self.vwin.Player2.resource=self.resource
         self.resource=self.vwin.Player2.Move(inputs2,self.map_all,objects,Player2_keypress)
         self.vwin.variables.Num_trees_cut=self.resource["Tree"]
+        self.vwin.variables.Num_wheat_harvested=self.resource["Wheat"]
         self.vwin.Player3.Auto_Move(self.map_all,objects)
+        self.vwin.Player4.Auto_Move(self.map_all,objects)
 ##        MOVE(self.vwin,self.map_all)
 
     def Update_Statsblock(self):
